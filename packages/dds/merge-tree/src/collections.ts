@@ -1176,6 +1176,10 @@ export class IntervalTree<T extends IInterval> implements IRBAugmentation<T, Aug
         console.log(`put total = ${this.putTime} avg=${(this.putTime / this.putCount).toFixed(2)}`);
     }
 
+    get(x: T): T | undefined {
+        return this.intervals.get(x)?.key;
+    }
+
     remove(x: T) {
         this.intervals.remove(x);
     }
