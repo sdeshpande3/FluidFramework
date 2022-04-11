@@ -15,8 +15,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12
-
-    steps:
       # - id: conflict
       #   name: Find merge conflicts
       #   uses: olivernybroe/action-conflict-finder@v2.0
