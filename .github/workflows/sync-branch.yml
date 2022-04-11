@@ -24,9 +24,9 @@ jobs:
           dirtyLabel: "status:has-conflicts"
           removeOnDirtyLabel: "status:needs-attention"
           continueOnMissingPermissions: true
-          commentOnDirty: "Hi @${{ github.event.pull_request.user.login }}, your pull request has merge conflicts with the next branch. Can you fix the conflicts and sync your branch with the base branch?"
+          commentOnDirty: "Hi @${{ github.event.pull_request.user.login }}, your pull request has merge conflicts. Can you fix the conflicts and sync your branch with the base branch?"
       # https://github.com/marketplace/actions/automatically-merge-pr    
-      # - name: Automatically Merge PR
-      #   uses: "pascalgn/automerge-action@v0.15.2" # https://github.com/marketplace/actions/auto-merge-pull-request
-      #   env:
-      #     GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Automatically Merge PR
+      - run: git checkout branch_2
+      - run: git merge --ff-only branch_1
+      - run: git push origin branch_2
