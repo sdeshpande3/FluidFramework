@@ -27,6 +27,7 @@ jobs:
           commentOnDirty: "Hi @${{ github.event.pull_request.user.login }}, your pull request has merge conflicts. Can you fix the conflicts and sync your branch with the base branch?"
       # https://github.com/marketplace/actions/automatically-merge-pr    
       - name: Automatically Merge PR
-      - run: git checkout branch_2
-      - run: git merge --ff-only branch_1
-      - run: git push origin branch_2
+      - run: | 
+        git checkout branch_2
+        git merge --ff-only branch_1
+        git push origin branch_2
