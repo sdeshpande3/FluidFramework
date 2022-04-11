@@ -1,7 +1,7 @@
 name: Sync
 on:
-  push:
-    branches: [ branch_1, branch_2 ]
+  # push:
+  #   branches: [ branch_1, branch_2 ]
   pull_request:
     types: [synchronize]
     branches: [ branch_1, branch_2 ]
@@ -29,12 +29,14 @@ jobs:
           commentOnClean: 'Conflicts have been resolved. A maintainer will take a look shortly.'
         env:
           LABELING_TOKEN: ${{ secrets.GITHUB_TOKEN }}    
-      - id: automerge
+      - id: automerge # https://github.com/pascalgn/automerge-action/issues/29
         name: automerge
         uses: pascalgn/automerge-action@v0.15.2
         env: 
-          GITHUB_TOKEN: "${{secrets.GITHUB_TOKEN}}"
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           MERGE_REQUIRED_APPROVALS: 1
+        with:
+          args: "--trace"
       - name: automerge-feedback
         if: steps.automerge.outputs.mergeResult == 'merged'
         run: |
