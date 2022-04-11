@@ -1,11 +1,9 @@
 name: Sync main and next branch
 on:
   push:
-    branches:
-      - branch_1
+    branches: [ branch_1 ]
   pull_number:
-    branches:
-      - branch_1
+    branches: [ branch_2 ]
 
 jobs:
   sync-branches:
