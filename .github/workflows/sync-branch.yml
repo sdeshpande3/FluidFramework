@@ -15,23 +15,23 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12
-      # - id: conflict
-      #   name: Find merge conflicts
-      #   uses: olivernybroe/action-conflict-finder@v2.0
-      #   env: 
-      #     GITHUB_TOKEN: "${{secrets.GITHUB_TOKEN}}"
-      # - name: conflict-feedback
-      #   if: steps.conflict.outputs.result == true
-      #   run: |
-      #     echo "Merge conflict exists"
-      #   with:
-      #     name: Opening pull request
-      #     id: pull
-      #     uses: tretuna/sync-branches@1.4.0
-      #     with:
-      #       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      #       FROM_BRANCH: "branch_1"
-      #       TO_BRANCH: "branch_2"      
+      - id: conflict
+        name: Find merge conflicts
+        uses: olivernybroe/action-conflict-finder@v2.0
+        env: 
+          GITHUB_TOKEN: "${{secrets.GITHUB_TOKEN}}"
+      - name: conflict-feedback
+        if: steps.conflict.outputs.result == true
+        run: |
+          echo "Merge conflict exists"
+        with:
+          name: Opening pull request
+          id: pull
+          uses: tretuna/sync-branches@1.4.0
+          with:
+            GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+            FROM_BRANCH: "branch_1"
+            TO_BRANCH: "branch_2"      
       - id: automerge
         name: automerge
         uses: pascalgn/automerge-action@v0.15.2
