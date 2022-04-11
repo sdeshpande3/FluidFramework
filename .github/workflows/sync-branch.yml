@@ -34,7 +34,7 @@ jobs:
       #       TO_BRANCH: "branch_2"      
       - id: automerge
         name: automerge
-        uses: "pascalgn/automerge-action@v0.15.2"
+        uses: pascalgn/automerge-action@v0.15.2
         env: 
           GITHUB_TOKEN: "${{secrets.GITHUB_TOKEN}}"
       - name: automerge-feedback
