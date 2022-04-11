@@ -15,10 +15,18 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12
-      - name: Opening pull request
-        id: pull
-        uses: tretuna/sync-branches@1.4.0
+      - name: Conflict Check
+      # https://github.com/apache/cloudstack/blob/main/.github/workflows/merge-conflict-checker.yml
+        uses: eps1lon/actions-label-merge-conflict@v2.0.0  
         with:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-          FROM_BRANCH: "branch_1"
-          TO_BRANCH: "branch_2"
+          dirtyLabel: "status:has-conflicts"
+          removeOnDirtyLabel: "status:needs-attention"
+          commentOnDirty: "Hi @${{ github.event.pull_request.user.login }}, your pull request has merge conflicts. Can you fix the conflicts and sync your branch with the base branch?"
+      # https://github.com/marketplace/actions/automatically-merge-pr    
+      - name: Automatically Merge PR
+          uses: plm9606/automerge_actions@1.2.3
+          with:
+            GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+            FROM_BRANCH: "branch_1"
+            TO_BRANCH: "branch_2"
