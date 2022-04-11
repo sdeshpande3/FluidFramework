@@ -1,9 +1,11 @@
+
+#https://github.com/octokit/action.js/
 name: Sync
 on:
-  # push:
-  #   branches: [ branch_1, branch_2 ]
+  push:
+    branches: branch_1 #https://stephencharlesweiss.com/github-actions-run-on-merge-only
   pull_request:
-    types: [synchronize]
+    if: github.event.pull_request.merged == true
     branches: [ branch_1, branch_2 ]
 
 jobs:
@@ -32,10 +34,9 @@ jobs:
       - id: automerge # https://github.com/pascalgn/automerge-action/issues/29
         name: automerge
         uses: pascalgn/automerge-action@v0.15.2
-        env: 
+        with: 
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           MERGE_REQUIRED_APPROVALS: 1
-        with:
           args: "--trace"
       - name: automerge-feedback
         if: steps.automerge.outputs.mergeResult == 'merged'
@@ -44,9 +45,9 @@ jobs:
 
 
 # name: Opening pull request
-      #     id: pull
-      #     uses: tretuna/sync-branches@1.4.0
-      #     with:
-      #       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      #       FROM_BRANCH: "branch_1"
-      #       TO_BRANCH: "branch_2"  
+#     id: pull
+#     uses: tretuna/sync-branches@1.4.0
+#     with:
+#       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+#       FROM_BRANCH: "branch_1"
+#       TO_BRANCH: "branch_2"  
