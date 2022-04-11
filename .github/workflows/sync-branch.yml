@@ -2,7 +2,7 @@ name: Sync branch_1 and branch_2 branch
 on:
   push:
     branches:
-      - branch_1
+      - branch_2
 
 jobs:
   sync-branches:
@@ -28,6 +28,8 @@ jobs:
       - name: Automatically Merge PR
         uses: plm9606/automerge_actions@1.2.3
         with:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-          FROM_BRANCH: "branch_1"
-          TO_BRANCH: "branch_2"
+          label-merge: automerge
+          reviewers-number: 1
+          merge-method: merge
+          auto-delete: true 
+          github-token: ${{secrets.GITHUB_TOKEN}}
