@@ -2,7 +2,7 @@ name: Sync main and next branch
 on:
   push:
     branches: [ branch_1 ]
-  pull_number:
+  pull_request:
     branches: [ branch_2 ]
 
 jobs:
