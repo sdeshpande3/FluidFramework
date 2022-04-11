@@ -20,18 +20,18 @@ jobs:
       # https://github.com/apache/cloudstack/blob/main/.github/workflows/merge-conflict-checker.yml
         uses: eps1lon/actions-label-merge-conflict@v2.0.0  
         with:
-          repoToken: ${{secrets.GITHUB_TOKEN}}
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
           dirtyLabel: "status:has-conflicts"
           removeOnDirtyLabel: "status:needs-attention"
           continueOnMissingPermissions: true
           commentOnDirty: "Hi @${{ github.event.pull_request.user.login }}, your pull request has merge conflicts. Can you fix the conflicts and sync your branch with the base branch?"
       # https://github.com/marketplace/actions/automatically-merge-pr    
       - name: Automatically Merge PR
-        uses: reitermarkus/automerge@v2
+        uses: tibdex/sync-branches@v1 # https://github.com/marketplace/actions/auto-merge-pull-request
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          merge-method: merge
-          do-not-merge-labels: never-merge
-          required-labels: automerge
-          pull-request: ${{ github.event.inputs.pull-request }}
-          dry-run: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # merge-method: merge
+          # do-not-merge-labels: never-merge
+          # required-labels: automerge
+          # pull-request: ${{ github.event.inputs.pull-request }}
+          # dry-run: false
