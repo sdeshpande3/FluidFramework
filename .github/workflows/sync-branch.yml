@@ -1,9 +1,8 @@
-name: Sync main and next branch
+name: Sync
 on:
   push:
-    branches: [ branch_1 ]
-  pull_request:
-    branches: [ branch_2 ]
+    branches:
+      - branch_1
 
 jobs:
   sync-branches:
@@ -16,22 +15,10 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12
-      - name: Conflict Check
-      # https://github.com/apache/cloudstack/blob/main/.github/workflows/merge-conflict-checker.yml
-        uses: eps1lon/actions-label-merge-conflict@v2.0.0  
+      - name: Opening pull request
+        id: pull
+        uses: tretuna/sync-branches@1.4.0
         with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
-          dirtyLabel: "status:has-conflicts"
-          removeOnDirtyLabel: "status:needs-attention"
-          continueOnMissingPermissions: true
-          commentOnDirty: "Hi @${{ github.event.pull_request.user.login }}, your pull request has merge conflicts. Can you fix the conflicts and sync your branch with the base branch?"
-      # https://github.com/marketplace/actions/automatically-merge-pr    
-      - name: Checkout branch_2
-        run: git checkout branch_2
-      - name: Merge branch_1 in branch_2
-        run: git merge --ff-only branch_1
-      - name: Push changes
-        run: git push origin branch_2
-
-        # git merge --ff-only branch_1
-        # git push origin branch_2
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          FROM_BRANCH: "branch_1"
+          TO_BRANCH: "branch_2"
