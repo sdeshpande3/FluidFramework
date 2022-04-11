@@ -1,7 +1,7 @@
 name: Sync
 on:
-  # push:
-  #   branches: [ branch_1, branch_2 ]
+  push:
+    branches: [ branch_1, branch_2 ]
   pull_request:
     types: [synchronize]
     branches: [ branch_1, branch_2 ]
