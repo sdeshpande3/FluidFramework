@@ -3,13 +3,7 @@ on:
   push:
     branches: [ branch_1 ]
   pull_request:
-    branches: [ branch_1 ]
-
-workflow_dispatch:
-  inputs:
-    pull-request:
-      description: Pull Request Number
-      required: false
+    branches: [ branch_2 ]
 
 jobs:
   sync-branches:
