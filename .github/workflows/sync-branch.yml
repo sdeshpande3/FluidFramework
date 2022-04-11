@@ -5,6 +5,12 @@ on:
   pull_request:
     branches: [ branch_1 ]
 
+workflow_dispatch:
+  inputs:
+    pull-request:
+      description: Pull Request Number
+      required: false
+
 jobs:
   sync-branches:
     runs-on: ubuntu-latest
@@ -32,5 +38,6 @@ jobs:
           label-merge: automerge
           reviewers-number: 1
           merge-method: merge
-          auto-delete: true 
+          auto-delete: true
+          pull-number: ${{ github.event.inputs.pull-request }} 
           github-token: ${{secrets.GITHUB_TOKEN}}
