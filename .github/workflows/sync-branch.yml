@@ -1,31 +1,55 @@
-name: Sync branch_1 and branch_2 branch
-on:
-  push:
-    branches:
-      - branch_1
+# name: Sync branch_1 and branch_2 branch
+# on:
+#   push:
+#     branches:
+#       - branch_1
 
+# jobs:
+#   sync-branches:
+#     runs-on: ubuntu-latest
+#     name: Syncing branches
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v2
+#       - name: Set up Node
+#         uses: actions/setup-node@v1
+#         with:
+#           node-version: 12
+#       - name: Conflict Check
+#       # https://github.com/apache/cloudstack/blob/main/.github/workflows/merge-conflict-checker.yml
+#         uses: eps1lon/actions-label-merge-conflict@v2.0.0  
+#         with:
+#           repoToken: ${{secrets.GITHUB_TOKEN}}
+#           dirtyLabel: "status:has-conflicts"
+#           removeOnDirtyLabel: "status:needs-attention"
+#           continueOnMissingPermissions: true
+#           commentOnDirty: "Hi @${{ github.event.pull_request.user.login }}, your pull request has merge conflicts. Can you fix the conflicts and sync your branch with the base branch?"
+#       # https://github.com/marketplace/actions/automatically-merge-pr    
+#       - name: Automatically Merge PR
+#         uses: plm9606/automerge_actions@1.2.3
+#         with:
+#           github-token: ${{secrets.GITHUB_TOKEN}}
+
+name: Check PR can be merged
+on:
+  pull_request:
+    types: [labeled]
+    branches:
+      - branch_2 # The branch you want to automatically merge pull request
 jobs:
-  sync-branches:
+  Run Actions:
     runs-on: ubuntu-latest
-    name: Syncing branches
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Set up Node
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12
-      - name: Conflict Check
-      # https://github.com/apache/cloudstack/blob/main/.github/workflows/merge-conflict-checker.yml
-        uses: eps1lon/actions-label-merge-conflict@v2.0.0  
-        with:
-          repoToken: ${{secrets.GITHUB_TOKEN}}
-          dirtyLabel: "status:has-conflicts"
-          removeOnDirtyLabel: "status:needs-attention"
-          continueOnMissingPermissions: true
-          commentOnDirty: "Hi @${{ github.event.pull_request.user.login }}, your pull request has merge conflicts. Can you fix the conflicts and sync your branch with the base branch?"
-      # https://github.com/marketplace/actions/automatically-merge-pr    
       - name: Automatically Merge PR
-        uses: plm9606/automerge_actions@1.2.3
+        uses: plm9606/automerge_actions@1.2.2
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
+          # The label name to automatically merge. Default is "automerge".
+          label-name: automerge
+          # The number of reviewers to automatically merge. Default is 1.
+          reviewers-number: 1
+          # The merge method ("merge", "squash", "rebase"). Default is "merge"
+          merge-method: merge
+          # Let the bot delete the merged branch. true or false.
+          auto-delete: true
+          # GitHub WebHook Secret Token
+          github-token: ${{ secrets.GITHUB_TOKEN }}
