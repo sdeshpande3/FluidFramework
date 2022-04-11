@@ -3,7 +3,7 @@ on:
   push:
     branches: [ branch_1 ]
   pull_request:
-    branches: [ branch_2 ]
+    branches: [ branch_1 ]
 
 jobs:
   sync-branches:
