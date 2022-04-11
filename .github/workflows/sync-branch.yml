@@ -27,11 +27,11 @@ jobs:
           commentOnDirty: "Hi @${{ github.event.pull_request.user.login }}, your pull request has merge conflicts. Can you fix the conflicts and sync your branch with the base branch?"
       # https://github.com/marketplace/actions/automatically-merge-pr    
       - name: Automatically Merge PR
-        uses: plm9606/automerge_actions@1.2.3
+        uses: reitermarkus/automerge@v2
         with:
-          label-merge: automerge
-          reviewers-number: 1
+          token: ${{ secrets.GITHUB_TOKEN }}
           merge-method: merge
-          auto-delete: true
-          pull-number: ${{ github.event.inputs.pull-request }} 
-          github-token: ${{secrets.GITHUB_TOKEN}}
+          do-not-merge-labels: never-merge
+          required-labels: automerge
+          pull-request: ${{ github.event.inputs.pull-request }}
+          dry-run: true
