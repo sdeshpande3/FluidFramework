@@ -28,8 +28,4 @@ jobs:
       - name: Automatically Merge PR
         uses: plm9606/automerge_actions@1.2.3
         with:
-          label-merge: automerge
-          reviewers-number: 1
-          merge-method: merge
-          auto-delete: true 
           github-token: ${{secrets.GITHUB_TOKEN}}
