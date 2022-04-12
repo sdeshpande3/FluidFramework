@@ -64,14 +64,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Set Git config
-      run: |
-          git config --local user.email "actions@github.com"
-          git config --local user.name "Github Actions"
+    # - name: Set Git config
+    #   run: |
+    #       git config --local user.email "actions@github.com"
+    #       git config --local user.name "Github Actions"
     - name: Merge branch_1 back to branch_2
       run: |
-          git fetch --unshallow
-          git checkout branch_2
-          git pull
           git merge --no-ff branch_1 -m "Auto-merge branch_1 back to branch_2"
-          git push
