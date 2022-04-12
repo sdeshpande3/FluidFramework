@@ -32,8 +32,6 @@ jobs:
         git config user.name "TypeScript Bot"
         git fetch origin branch_1
         git merge origin/branch_1 --no-ff
-        npm ci
-        npm test
         git push
   feedback-conflicts:
     runs-on: ubuntu-latest
