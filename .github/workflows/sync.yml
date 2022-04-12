@@ -27,7 +27,7 @@ jobs:
     - run: |
         git config user.email "typescriptbot@microsoft.com"
         git config user.name "TypeScript Bot"
-        git fetch origin branch_1
+        git checkout origin branch_2
         git merge origin/branch_1 --no-ff
         git push
   create-comment-success:
