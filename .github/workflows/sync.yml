@@ -24,15 +24,36 @@ jobs:
       with:
         ref: ${{ github.event.inputs.branch_name || github.event.client_payload.branch_name }}
         fetch-depth: 0
-    # This does a test post-merge and only pushes the result if the test succeeds
-    # required client_payload members:
-    # branch_name - the target branch
     - run: |
         git config user.email "typescriptbot@microsoft.com"
         git config user.name "TypeScript Bot"
         git fetch origin branch_1
         git merge origin/branch_1 --no-ff
         git push
+  create-comment-success:
+    runs-on: ubuntu-latest
+    needs: [feedback-conflicts]
+    if: needs.feedback-conflicts.result != 'failure'
+    steps:
+      - uses: mshick/add-pr-comment@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          message: |
+            **You have a no merge conflict with branch_2.**
+          allow-repeats: true
+  create-comment-failure:
+    runs-on: ubuntu-latest
+    needs: [feedback-conflicts]
+    if: needs.feedback-conflicts.result == 'failure'
+    steps:
+      - uses: mshick/add-pr-comment@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          message: |
+            **You have a merge conflict with branch_2. Please resolve these conflicts!!**
+          allow-repeats: true
   feedback-conflicts:
     runs-on: ubuntu-latest
     needs: [check-conflicts]
@@ -45,16 +66,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           FROM_BRANCH: "branch_1"
           TO_BRANCH: "branch_2"
-  create-comment:
-    runs-on: ubuntu-latest
-    needs: [feedback-conflicts]
-    if: needs.feedback-conflicts.result != 'failure'
-    steps:
-      - uses: mshick/add-pr-comment@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          message: |
-            **You have a merge conflict with branch_2. Please resolve these conflicts!!**
-          allow-repeats: true
+
 #
