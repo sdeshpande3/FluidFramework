@@ -11,8 +11,8 @@ jobs:
         id: mergeconflict
         run: |
             git init
-            git checkout $TARGET_BRANCH
-            git merge $SOURCE_BRANCH
+            git checkout branch_2
+            git merge branch_1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SOURCE_BRANCH: "branch_1"
