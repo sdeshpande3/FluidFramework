@@ -4,13 +4,19 @@ on:
     branches: branch_1
 
 jobs:
+  get-author-details:
+    runs-on: ubuntu-latest
+    steps:
+      - name: author-name
+        run: echo "This PR is opened by ${{ github.event.pull_request.user.login }}."
+
   check-conflicts:
     runs-on: ubuntu-latest
     steps:
       - name: Checking branches for merge conflicts
         id: mergeconflict
         run: |
-            git init
+            git fetch
             git checkout branch_2
             git merge branch_1
   feedback-conflicts:
@@ -18,7 +24,7 @@ jobs:
     needs: [check-conflicts]
     if: always() && (needs.check-conflicts.result == 'failure')
     steps:
-      - name: Opening pull request to resolve merge conflic
+      - name: Opening pull request to resolve merge conflicts
         id: pull
         uses: tretuna/sync-branches@1.4.0
         with:
