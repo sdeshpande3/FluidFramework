@@ -1,53 +1,78 @@
 
-#https://github.com/octokit/action.js/
-name: Sync
+# #https://github.com/octokit/action.js/
+# name: Sync
+# on:
+#   push:
+#     branches: branch_1 #https://stephencharlesweiss.com/github-actions-run-on-merge-only
+#   pull_request:
+#     if: github.event.pull_request.merged == true
+#     branches: [ branch_1, branch_2 ]
+
+# jobs:
+#   sync-branches:
+#     runs-on: ubuntu-latest
+#     name: Syncing branches
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v2
+#       - name: Set up Node
+#         uses: actions/setup-node@v1
+#         with:
+#           node-version: 12
+#       - name: check if prs are dirty
+#         uses: eps1lon/actions-label-merge-conflict@releases/2.x
+#         if: env.LABELING_TOKEN != '' && env.LABELING_TOKEN != null
+#         id: check
+#         with:
+#           dirtyLabel: "conflicting"
+#           repoToken: "${{ secrets.GITHUB_TOKEN }}"
+#           continueOnMissingPermissions: true
+#           commentOnDirty: 'This pull request has conflicting changes, the author must resolve the conflicts before this pull request can be merged.'
+#           commentOnClean: 'Conflicts have been resolved. A maintainer will take a look shortly.'
+#         env:
+#           LABELING_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#       - id: automerge # https://github.com/pascalgn/automerge-action/issues/29
+#         name: automerge
+#         uses: pascalgn/automerge-action@v0.15.2
+#         with:
+#           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+#           MERGE_REQUIRED_APPROVALS: 1
+#           args: "--trace"
+#       - name: automerge-feedback
+#         if: steps.automerge.outputs.mergeResult == 'merged'
+#         run: |
+#           echo "Pull request ${{ steps.automerge.outputs.pullRequestNumber }} merged!"
+
+
+# # name: Opening pull request
+# #     id: pull
+# #     uses: tretuna/sync-branches@1.4.0
+# #     with:
+# #       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+# #       FROM_BRANCH: "branch_1"
+# #       TO_BRANCH: "branch_2"
+
+
+name: PRs to next branch
 on:
-  push:
-    branches: branch_1 #https://stephencharlesweiss.com/github-actions-run-on-merge-only
   pull_request:
-    if: github.event.pull_request.merged == true
-    branches: [ branch_1, branch_2 ]
-
+    branches: [branch_1]
+    types: [closed]
 jobs:
-  sync-branches:
+  merge-master-back-to-dev:
+    if: github.event.pull_request.merged == true
+    timeout-minutes: 2
     runs-on: ubuntu-latest
-    name: Syncing branches
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Set up Node
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12
-      - name: check if prs are dirty
-        uses: eps1lon/actions-label-merge-conflict@releases/2.x
-        if: env.LABELING_TOKEN != '' && env.LABELING_TOKEN != null
-        id: check
-        with:
-          dirtyLabel: "conflicting"
-          repoToken: "${{ secrets.GITHUB_TOKEN }}"
-          continueOnMissingPermissions: true
-          commentOnDirty: 'This pull request has conflicting changes, the author must resolve the conflicts before this pull request can be merged.'
-          commentOnClean: 'Conflicts have been resolved. A maintainer will take a look shortly.'
-        env:
-          LABELING_TOKEN: ${{ secrets.GITHUB_TOKEN }}    
-      - id: automerge # https://github.com/pascalgn/automerge-action/issues/29
-        name: automerge
-        uses: pascalgn/automerge-action@v0.15.2
-        with: 
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          MERGE_REQUIRED_APPROVALS: 1
-          args: "--trace"
-      - name: automerge-feedback
-        if: steps.automerge.outputs.mergeResult == 'merged'
-        run: |
-          echo "Pull request ${{ steps.automerge.outputs.pullRequestNumber }} merged!"
-
-
-# name: Opening pull request
-#     id: pull
-#     uses: tretuna/sync-branches@1.4.0
-#     with:
-#       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-#       FROM_BRANCH: "branch_1"
-#       TO_BRANCH: "branch_2"  
+    - uses: actions/checkout@v2
+    - name: Set Git config
+      run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "Github Actions"
+    - name: Merge branch_1 back to branch_2
+      run: |
+          git fetch --unshallow
+          git checkout branch_2
+          git pull
+          git merge --no-ff branch_1 -m "Auto-merge branch_1 back to branch_2"
+          git push
