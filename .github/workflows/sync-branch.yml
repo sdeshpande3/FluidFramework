@@ -35,17 +35,17 @@ jobs:
         #   commentOnClean: 'Conflicts have been resolved. A maintainer will take a look shortly.'
         env:
           LABELING_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - id: automerge # https://github.com/pascalgn/automerge-action/issues/29
-        name: automerge
-        uses: pascalgn/automerge-action@v0.15.2
-        with:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          MERGE_REQUIRED_APPROVALS: 1
-          args: "--trace"
-      - name: automerge-feedback
-        if: steps.automerge.outputs.mergeResult == 'merged'
-        run: |
-          echo "Pull request ${{ steps.automerge.outputs.pullRequestNumber }} merged!"
+      # - id: automerge # https://github.com/pascalgn/automerge-action/issues/29
+      #   name: automerge
+      #   uses: pascalgn/automerge-action@v0.15.2
+      #   with:
+      #     GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      #     MERGE_REQUIRED_APPROVALS: 1
+      #     args: "--trace"
+      # - name: automerge-feedback
+      #   if: steps.automerge.outputs.mergeResult == 'merged'
+      #   run: |
+      #     echo "Pull request ${{ steps.automerge.outputs.pullRequestNumber }} merged!"
 
 
 # name: Opening pull request
