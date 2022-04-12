@@ -56,8 +56,7 @@
 name: PRs to next branch
 on:
   push:
-    branches: [branch_1]
-    types: [closed]
+    branches: branch_1
 jobs:
   merge-master-back-to-dev:
     if: github.event.pull_request.merged == true
