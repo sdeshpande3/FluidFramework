@@ -4,20 +4,37 @@ on:
     branches: branch_1
   issue_comment:
     types: created
+  repository_dispatch:
+    types: sync-branch
+  workflow_dispatch:
+    inputs:
+      branch_name:
+        description: branch_2
+        required: true
 
 jobs:
   check-conflicts:
     runs-on: ubuntu-latest
     steps:
-      - name: Checking branches for merge conflicts
-        run: |
-            sudo apt-get install -y software-properties-common \
-            && sudo apt-get update \
-            && sudo add-apt-repository -y ppa:git-core/ppa \
-            && sudo apt-get update \
-            && sudo apt-get install -y git
-            git checkout branch_2
-            git merge branch_1
+    - name: Use node version 14.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 14.x
+    - uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.inputs.branch_name || github.event.client_payload.branch_name }}
+        fetch-depth: 0
+    # This does a test post-merge and only pushes the result if the test succeeds
+    # required client_payload members:
+    # branch_name - the target branch
+    - run: |
+        git config user.email "typescriptbot@microsoft.com"
+        git config user.name "TypeScript Bot"
+        git fetch origin branch_1
+        git merge origin/branch_1 --no-ff
+        npm ci
+        npm test
+        git push
   feedback-conflicts:
     runs-on: ubuntu-latest
     needs: [check-conflicts]
