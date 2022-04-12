@@ -55,7 +55,7 @@
 
 name: PRs to next branch
 on:
-  pull_request:
+  push:
     branches: [branch_1]
     types: [closed]
 jobs:
