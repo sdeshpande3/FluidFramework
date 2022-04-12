@@ -13,10 +13,6 @@ jobs:
             git init
             git checkout branch_2
             git merge branch_1
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SOURCE_BRANCH: "branch_1"
-          TARGET_BRANCH: "branch_2"
   feedback-conflicts:
     runs-on: ubuntu-latest
     needs: [check-conflicts]
