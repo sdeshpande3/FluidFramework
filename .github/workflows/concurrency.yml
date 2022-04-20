@@ -10,7 +10,7 @@ on:
     - branch_1 
 
 concurrency:
-  group: deployment
+  group: deployment-${{ github.workflow }}
   cancel-in-progress: false
 
 jobs:
@@ -28,9 +28,6 @@ jobs:
     name: Deploy
     needs:
     - build
-    concurrency:
-      group: deployment
-      cancel-in-progress: false
     runs-on: ubuntu-latest
     steps:
       - name: Deploy the code
