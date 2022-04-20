@@ -5,7 +5,7 @@ name: Push To Main
 on:
   push:
     branch:
-    - main
+    - branch_1
 
 jobs:
   build:
