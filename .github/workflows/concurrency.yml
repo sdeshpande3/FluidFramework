@@ -6,7 +6,8 @@ name: Push To Main
 
 on:
   push:
-    branch: [ branch_1 ]
+    branch: 
+    - branch_1 
 
 jobs:
   workflow:
