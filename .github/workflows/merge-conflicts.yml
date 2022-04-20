@@ -1,0 +1,29 @@
+#https://www.jessesquires.com/blog/2021/08/24/useful-label-based-github-actions-workflows/
+
+name: Do Not Merge
+
+on:
+  push:
+    branch: [ main ]
+    types: [opened, reopened, labeled, unlabeled]
+
+jobs:
+  do-not-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: check labels
+        uses: mheap/github-action-required-labels@v1
+        with:
+          mode: exactly
+          count: 0
+          labels: "merge-conflict-with-next-branch"
+  notify:
+    if: ${{ contains(github.event.*.labels.*.name, 'merge-conflict-with-next-branch') }}
+    name: Prevent Merging
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for label
+        run: |
+          echo "Pull request is labeled as 'do not merge'"
+          echo "This workflow fails so that the pull request cannot be merged"
+          exit 1
