@@ -6,8 +6,10 @@ on:
   push:
     branch:
     - branch_1
-  schedule:
-    - cron: '*/5 * * * *'    # At every 5th minute
+
+concurrency:
+  group: deployment
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -24,9 +26,6 @@ jobs:
     name: Deploy
     needs:
     - build
-    concurrency:
-      group: deployment
-      cancel-in-progress: false
     runs-on: ubuntu-latest
     steps:
       - name: Deploy the code
