@@ -24,6 +24,7 @@ jobs:
     - build
     concurrency:
       group: deployment
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     steps:
       - name: Deploy the code
