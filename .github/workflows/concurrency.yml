@@ -10,12 +10,6 @@ on:
     - branch_1 
 
 jobs:
-  workflow:
-    name: Workflow name
-    run: | 
-      echo ${{ github.workflow }}
-      echo ${{ github.head_ref }}
-      echo ${{ github.run_id }}
   pre-ci:
     runs-on: ubuntu-latest
     timeout-minutes: 1
