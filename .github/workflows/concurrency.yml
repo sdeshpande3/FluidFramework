@@ -1,0 +1,33 @@
+# https://www.youtube.com/watch?v=XxufR0fjj8Y
+
+name: Push To Main
+
+on:
+  push:
+    branch:
+    - main
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build the code
+        run: |
+          echo "Starting Code Build"
+          sleep 2m
+          echo "Finish Code Build"
+
+  deploy:
+    name: Deploy
+    needs:
+    - build
+    concurrency:
+      group: deployment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy the code
+        run: |
+          echo "Deploying the code"
+          sleep 2m
+          echo "Finish deployment"
