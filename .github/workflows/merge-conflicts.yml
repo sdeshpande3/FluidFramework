@@ -45,8 +45,8 @@ jobs:
           This PR is auto-generated. \n
           Resolves: ${{ github.event.pull_request.number }}
         labels: report, automated pr
-        # actor: ${{ github.actor }}
-        # assignees: ${{ github.actor }}
+        actor: ${{ github.event.pull_request.sender }}
+        assignees: ${{ github.event.pull_request.sender }}
         # reviewers: some git bot with merge permissions
   add-comment:
     runs-on: ubuntu-latest
