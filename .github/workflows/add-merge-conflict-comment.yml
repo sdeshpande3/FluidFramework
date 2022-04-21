@@ -1,0 +1,35 @@
+name: Add Comment on PR if merge conflicts exist with branch_2 branch
+
+on:
+  pull_request:
+    branch: [ branch_1 ]
+
+jobs:
+  check-conflicts:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Use node version 14.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 14.x
+    - uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.inputs.branch_name || github.event.client_payload.branch_name }}
+        fetch-depth: 0
+    - run: |
+        git config user.email "syncbranchbot@microsoft.com"
+        git config user.name "Sync-Branch Bot"
+        echo ${{ github.event.pull_request.head.sha }}
+        git fetch origin branch_2
+        git checkout branch_2
+        git merge ${{ github.event.pull_request.head.sha }}
+  add-comment:
+    runs-on: ubuntu-latest
+    needs: [check-conflicts]
+    if: needs.check-conflicts.result == 'failure'
+    steps:
+      - name:  add-conflict-comment
+        uses: thollander/actions-comment-pull-request@v1
+        with:
+          message: 'You might have to revisit this PR later to resolve conflicts with the branch_2 branch!'
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,41 @@
+# https://www.youtube.com/watch?v=XxufR0fjj8Y
+# https://github.com/marketplace/actions/send-job-status-to-azure-queue
+# https://github.community/t/avoiding-conflicts-when-two-workflows-push-to-the-same-branch/233774/8
+
+name: Push To Main
+
+on:
+  push:
+    branch:
+    - branch_1
+
+concurrency:
+  group: deployment
+  cancel-in-progress: false
+
+concurrency:
+  group: deployment-${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build the code
+        run: |
+          echo "Starting Code Build"
+          sleep 2m
+          echo "Finish Code Build"
+
+  deploy:
+    name: Deploy
+    needs:
+    - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy the code
+        run: |
+          echo "Deploying the code"
+          sleep 2m
+          echo "Finish deployment"
