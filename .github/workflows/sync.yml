@@ -1,83 +1,84 @@
-# name: Sync branches
-# on:
-#   push:
-#     branches: main
-#     types: [ labelled ] # https://stackoverflow.com/questions/62325286/run-github-actions-when-pull-requests-have-a-specific-label
-#   issue_comment:
-#     types: created
-#   repository_dispatch:
-#     types: sync-branch
-#   workflow_dispatch:
-#     inputs:
-#       branch_name:
-#         description: next
-#         required: true
+name: Sync branches
+on:
+  push:
+    branches: main
+    types: [ labelled ] # https://stackoverflow.com/questions/62325286/run-github-actions-when-pull-requests-have-a-specific-label
+  issue_comment:
+    types: created
+  repository_dispatch:
+    types: sync-branch
+  workflow_dispatch:
+    inputs:
+      branch_name:
+        description: next
+        required: true
 
-# concurrency:  # https://github.blog/changelog/2021-04-19-github-actions-limit-workflow-run-or-job-concurrency/
-#   group: merge-commit-to-next
+concurrency:  # https://github.blog/changelog/2021-04-19-github-actions-limit-workflow-run-or-job-concurrency/
+  group: merge-commit-to-next
 
-# jobs:
-#   commit-id:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Declare some variables
-#         run: |
-#           echo ${{ context.sha }}
-#   check-conflicts:
-#     if: ${{ github.event.label.name != 'do-not-merge-in-next' }}
-#     runs-on: ubuntu-latest
-#     steps:
-#     - name: Run a one-line script
-#       run: echo "Merging into next branch!"
-#     - name: Use node version 14.x
-#       uses: actions/setup-node@v1
-#       with:
-#         node-version: 14.x
-#     - uses: actions/checkout@v2
-#       with:
-#         ref: ${{ github.event.inputs.branch_name || github.event.client_payload.branch_name }}
-#         fetch-depth: 0
-#     - run: | # add the PR commit id on line 50 instead of branch name
-#         git config user.email "syncbranchbot@microsoft.com"
-#         git config user.name "Sync-Branch Bot"
-#         git fetch origin next
-#         git checkout next
-#         git cherry-pick ${{ PR_SHA }}
-#         git push
-#   create-pr:
-#     runs-on: ubuntu-failure
-#     needs: [check-conflicts]
-#     if: needs.check-conflicts.result == 'failure'
-#     steps:
-#       - uses:
-#         env:
-#   create-comment-failure:
-#     runs-on: ubuntu-latest
-#     needs: [check-conflicts]
-#     if: needs.check-conflicts.result == 'failure'
-#     steps:
-#       - uses: mshick/add-pr-comment@v1
-#         env:
-#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#         with:
-#           message: |
-#             **You have a merge conflict with next: ${{ PR_LINK }}. Please resolve these conflicts!!**
-#           allow-repeats: true
+jobs:
+  commit-id:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Declare some variables
+        run: |
+          echo ${{ context.sha }}
+          echo ${{ github.sha }}
+  check-conflicts:
+    if: ${{ github.event.label.name != 'do-not-merge-in-next' }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Run a one-line script
+      run: echo "Merging into next branch!"
+    - name: Use node version 14.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 14.x
+    - uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.inputs.branch_name || github.event.client_payload.branch_name }}
+        fetch-depth: 0
+    - run: | # add the PR commit id on line 50 instead of branch name
+        git config user.email "syncbranchbot@microsoft.com"
+        git config user.name "Sync-Branch Bot"
+        git fetch origin next
+        git checkout next
+        git merge ${{ github.sha }}
+        git push
+  create-pr:
+    runs-on: ubuntu-failure
+    needs: [check-conflicts]
+    if: needs.check-conflicts.result == 'failure'
+    steps:
+      - uses:
+        env:
+  create-comment-failure:
+    runs-on: ubuntu-latest
+    needs: [check-conflicts]
+    if: needs.check-conflicts.result == 'failure'
+    steps:
+      - uses: mshick/add-pr-comment@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          message: |
+            **You have a merge conflict with next: ${{ PR_LINK }}. Please resolve these conflicts!!**
+          allow-repeats: true
 
 
 
 
-#   # feedback-conflicts:
-#   #   runs-on: ubuntu-latest
-#   #   needs: [check-conflicts]
-#   #   if: needs.check-conflicts.result == 'failure'
-#   #   steps:
-#   #     - name: Opening pull request to resolve merge conflicts
-#   #       id: pull
-#   #       uses: tretuna/sync-branches@1.4.0
-#   #       with:
-#   #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#   #         FROM_BRANCH: "main"
-#   #         TO_BRANCH: "next"
+  # feedback-conflicts:
+  #   runs-on: ubuntu-latest
+  #   needs: [check-conflicts]
+  #   if: needs.check-conflicts.result == 'failure'
+  #   steps:
+  #     - name: Opening pull request to resolve merge conflicts
+  #       id: pull
+  #       uses: tretuna/sync-branches@1.4.0
+  #       with:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         FROM_BRANCH: "main"
+  #         TO_BRANCH: "next"
 
-# #
+#

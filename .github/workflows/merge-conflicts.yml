@@ -1,6 +1,6 @@
 #https://www.jessesquires.com/blog/2021/08/24/useful-label-based-github-actions-workflows/
 
-name: Do Not Merge
+name: Detect Merge Conflicts
 
 on:
   push:
