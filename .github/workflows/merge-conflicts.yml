@@ -63,11 +63,14 @@ jobs:
         git checkout branch_2
         git merge ${{ github.sha }}
         git push
-  create-pr-resolving-conflicts: # https://github.com/peter-evans/create-pull-request
-    - uses: actions/checkout@v3
+  # create-pr-resolving-conflicts: # https://github.com/peter-evans/create-pull-request
+  create-pr-resolving-conflicts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
 
-      # - name: Make changes to pull request
-      #   run: date +%s > report.txt
+      - name: Make changes to pull request
+        run: date +%s > report.txt
 
       - name: Create Pull Request Against branch_2 branch
         id: cpr
@@ -84,7 +87,7 @@ jobs:
           title: '[AUTO] Resolve merge conflicts with branch_2 branch'
           body: |
             This PR is auto-generated. \n
-            Resolves: ${{ github.event.pull_request.number }}
+          # Resolves: ${{ github.event.pull_request.number }}
           labels: |
             report
             automated pr
