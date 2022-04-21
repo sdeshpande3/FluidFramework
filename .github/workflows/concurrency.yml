@@ -13,6 +13,10 @@ concurrency:
   group: deployment
   cancel-in-progress: false
 
+concurrency:
+  group: deployment-${{ github.workflow }}
+  cancel-in-progress: false
+
 jobs:
   build:
     name: Build
