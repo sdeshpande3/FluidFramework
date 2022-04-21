@@ -9,6 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: check-conflicts
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.inputs.branch_name || github.event.client_payload.branch_name }}
+          fetch-depth: 0
         run: |
           git config user.email "syncbranchbot@microsoft.com"
           git config user.name "Sync-Branch Bot"
