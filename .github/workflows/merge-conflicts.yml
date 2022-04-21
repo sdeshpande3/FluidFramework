@@ -13,8 +13,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Make changes to pull request
-        run: date +%s > report.txt
+      # - name: Make changes to pull request
+      #   run: date +%s > report.txt
 
       - name: Create Pull Request Against branch_2 branch
         id: cpr
@@ -31,7 +31,7 @@ jobs:
           title: '[AUTO] Resolve merge conflicts with branch_2 branch'
           body: |
             This PR is auto-generated. \n
-          # Resolves: ${{ github.event.pull_request.number }}
+            Resolves: 1
           labels: |
             report
             automated pr
@@ -41,6 +41,17 @@ jobs:
             sonalivdeshpande
           milestone: 1
           draft: false
+
+  add-comment:
+    runs-on: ubuntu-latest
+    needs: [check-conflicts, createPullRequest]
+    if: needs.check-conflicts.result != 'failure'
+    steps:
+      - name:  add-conflict-comment
+        uses: thollander/actions-comment-pull-request@v1
+        with:
+          message: "THIS COMMIT HAD MERGE CONFLICTS WITH NEXT BRANCH. \n Resolves: ${{ steps.cpr.outputs.pull-request-number }}"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 # jobs:
 #   check-conflicts:
