@@ -50,8 +50,7 @@ jobs:
         # reviewers: some git bot with merge permissions
   add-comment:
     runs-on: ubuntu-latest
-    needs: [check-conflicts]
-    needs: [create-pr-resolving-conflicts]
+    needs: [check-conflicts, create-pr-resolving-conflicts]
     if: needs.check-conflicts.result != 'failure'
     steps:
       - name:  add-conflict-comment
