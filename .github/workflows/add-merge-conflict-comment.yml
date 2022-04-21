@@ -2,7 +2,7 @@ name: Add Comment on PR regarding merge conflicts with next branch
 
 on:
   pull_request:
-    branch: [ main ]
+    branch: [ branch_1 ]
 
 jobs:
   # check-conflicts:
