@@ -1,8 +1,8 @@
-name: Add Comment on PR if merge conflicts exist with next branch
+name: Add Comment on PR if merge conflicts exist with branch_2 branch
 
 on:
   pull_request:
-    branch: [ main ]
+    branch: [ branch_1 ]
 
 jobs:
   check-conflicts:
@@ -20,8 +20,8 @@ jobs:
         git config user.email "syncbranchbot@microsoft.com"
         git config user.name "Sync-Branch Bot"
         echo ${{ github.event.pull_request.head.sha }}
-        git fetch origin next
-        git checkout next
+        git fetch origin branch_2
+        git checkout branch_2
         git merge ${{ github.event.pull_request.head.sha }}
   add-comment:
     runs-on: ubuntu-latest
@@ -31,5 +31,5 @@ jobs:
       - name:  add-conflict-comment
         uses: thollander/actions-comment-pull-request@v1
         with:
-          message: 'You might have to revisit this PR later to resolve conflicts with the next branch!'
+          message: 'You might have to revisit this PR later to resolve conflicts with the branch_2 branch!'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -3,8 +3,9 @@
 name: Detect Merge Conflicts When Commits Are pushed to the main branch
 
 on:
-  pull_request:
-    branch: [ branch_1 ]
+  push:
+    branch:
+    - branch_1
 
 jobs:
   # check-conflicts:
@@ -37,6 +38,8 @@ jobs:
       uses: peter-evans/create-pull-request@v3
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
+        base: branch_1
+        branch: branch_2
         commit-message: 'AUTO: ${{ github.sha }} has merge conflicts with branch_2 branch. \n Resolves: ${{ github.event.pull_request.number }}'
         title: '[AUTO] Resolve merge conflicts with branch_2 branch'
         body: >
