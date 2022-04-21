@@ -39,8 +39,8 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         base: branch_1
         branch: branch_2
-        commit-message: 'AUTO: ${{ github.sha }} has merge conflicts with branch_2 branch. \n Resolves: ${{ github.event.pull_request.number }}'
-        title: '[AUTO] Resolve merge conflicts with branch_2 branch'
+        commit-message: [AUTO] ${{ github.sha }} has merge conflicts with branch_2 branch.
+        title: [AUTO] Resolve merge conflicts with branch_2 branch
         body: >
           This PR is auto-generated. \n
           Resolves: ${{ github.event.pull_request.number }}
@@ -56,7 +56,7 @@ jobs:
       - name:  add-conflict-comment
         uses: thollander/actions-comment-pull-request@v1
         with:
-          message: 'THIS COMMIT HAD MERGE CONFLICTS WITH NEXT BRANCH. \n Resolves: ${{ steps.create-pr-resolving-conflicts.outputs.pull-request-number }}'
+          message: "THIS COMMIT HAD MERGE CONFLICTS WITH NEXT BRANCH. \n Resolves: ${{ steps.create-pr-resolving-conflicts.outputs.pull-request-number }}"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
