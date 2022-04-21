@@ -5,19 +5,19 @@ on:
     branch: [ branch_1 ]
 
 jobs:
-  # check-conflicts:
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     LATEST_COMMIT_ID: git log --format="%H" -n 1
-  #   steps:
-  #     - name: check-conflicts
-  #       run: |
-  #         git checkout next
-  #         git merge LATEST_COMMIT_ID
+  check-conflicts:
+    runs-on: ubuntu-latest
+    env:
+      LATEST_COMMIT_ID: git log --format="%H" -n 1
+    steps:
+      - name: check-conflicts
+        run: |
+          git checkout branch_2
+          git merge LATEST_COMMIT_ID
   add-comment:
     runs-on: ubuntu-latest
-    # needs: [check-conflicts]
-    # if: needs.check-conflicts.result == 'failure'
+    needs: [check-conflicts]
+    if: needs.check-conflicts.result != 'failure'
     steps:
       - name:  add-conflict-comment
         uses: thollander/actions-comment-pull-request@v1
