@@ -12,8 +12,12 @@ jobs:
     steps:
       - name: check-conflicts
         run: |
+          echo $LATEST_COMMIT_ID
+          git config user.email "syncbranchbot@microsoft.com"
+          git config user.name "Sync-Branch Bot"
+          git fetch origin branch_2
           git checkout branch_2
-          git merge LATEST_COMMIT_ID
+          git merge $LATEST_COMMIT_ID
   add-comment:
     runs-on: ubuntu-latest
     needs: [check-conflicts]
