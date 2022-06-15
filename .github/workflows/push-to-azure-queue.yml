@@ -2,7 +2,7 @@ name: Push commit to Azure Queue
 
 on:
   push:
-    branch: [ main ]
+    branch: [ test_main ]
 
 jobs:
   queue-pr:
