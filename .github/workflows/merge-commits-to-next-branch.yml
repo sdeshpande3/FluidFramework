@@ -29,8 +29,8 @@ jobs:
             const queueClient = queueServiceClient.getQueueClient(queueName);
             var receivedMessages = await queueClient.receiveMessages();
             const message = receivedMessages.receivedMessageItems[0];
-            ${{ env.COMMIT_INFO }} = JSON.parse(message.messageText);
-            console.log("Commit info---", ${{ env.COMMIT_INFO }});
+            const firstMessage = JSON.parse(message.messageText);
+            console.log("Commit info---", firstMessage);
   # create-branch:
   #   runs-on: ubuntu-latest
   #   if: ( ${{ env.COMMIT_INFO }}.label == 'queued' )
