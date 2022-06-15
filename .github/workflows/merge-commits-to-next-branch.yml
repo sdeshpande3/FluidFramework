@@ -39,7 +39,7 @@ jobs:
   create-branch:
     runs-on: ubuntu-latest
     needs: [ dequeue ]
-    if: (needs.dequeue.deque-message.outputs.result).label == 'queued'
+    if: needs.dequeue.result == 'success'
     steps:
       - name: Create branch
         uses: actions/github-script@v6
@@ -47,8 +47,8 @@ jobs:
           script: |
             git fetch origin
             git checkout $TARGET_BRANCH
-            git checkout -b main-next-((needs.dequeue.outputs.result).sha)
-            git merge (needs.dequeue.outputs.result).sha --no-ff
+            git checkout -b main-next-((needs.dequeue.result).sha)
+            git merge (needs.dequeue.result).sha --no-ff
   # reset-branch:
   #   runs-on: ubuntu-latest
   #   if: ( ${{ env.COMMIT_INFO }}.label == 'queued' && needs.create-branch.result == 'failure'
