@@ -48,9 +48,9 @@ jobs:
           echo $AUTHOR | jq '.[].author'
     outputs:
       COMMIT_INFO: ${{ steps.deque-message.outputs.result }}
-      LABEL: ${{ steps.set.outputs.label }}
-      AUTHOR: ${{ steps.set.outputs.author }}
-      SHA: ${{ steps.set.outputs.sha }}
+      LABEL: ${{ steps.set.outputs.LABEL }}
+      AUTHOR: ${{ steps.set.outputs.AUTHOR }}
+      SHA: ${{ steps.set.outputs.SHA }}
   create-branch:
     runs-on: ubuntu-latest
     needs: [ dequeue ]
@@ -58,6 +58,8 @@ jobs:
     steps:
       - run:
           echo ${{needs.dequeue.outputs.LABEL}}
+          echo ${{needs.dequeue.outputs.AUTHOR}}
+          echo ${{needs.dequeue.outputs.SHA}}
 
 #   - name: Git checkout
 #     if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
