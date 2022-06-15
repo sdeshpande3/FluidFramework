@@ -41,6 +41,10 @@ jobs:
     if: (needs.dequeue.result) == 'success' # check if needs.deque.output.label == 'queued'
     steps:
       - run: echo "${{needs.dequeue.outputs.COMMIT_INFO}}"
+      - name: Git checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
       - name: Create branch
         run: |
           git fetch origin
