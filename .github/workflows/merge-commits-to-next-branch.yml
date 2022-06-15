@@ -48,7 +48,7 @@ jobs:
           echo $AUTHOR | jq '.[].author'
     outputs:
       COMMIT_INFO: ${{ steps.deque-message.outputs.result }}
-      LABEL: ${{ steps.set.outputs.LABEL }}
+      LABEL: ${{ fromJSON(steps.deque-message.outputs.result).label }}
       AUTHOR: ${{ steps.set.outputs.AUTHOR }}
       SHA: ${{ steps.set.outputs.SHA }}
   create-branch:
@@ -57,10 +57,7 @@ jobs:
     if: (needs.dequeue.result) == 'success'
     steps:
       - run:
-          echo ${{needs.dequeue.outputs.COMMIT_INFO}}
           echo ${{needs.dequeue.outputs.LABEL}}
-          echo ${{needs.dequeue.outputs.AUTHOR}}
-          echo ${{needs.dequeue.outputs.SHA}}
       - name: Git checkout
         if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
         uses: actions/checkout@v2
