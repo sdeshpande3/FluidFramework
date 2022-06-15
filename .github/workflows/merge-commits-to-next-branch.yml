@@ -36,7 +36,6 @@ jobs:
       - run: |
           echo "${{ steps.deque-message.outputs.result }}"
           echo $COMMIT_INFO
-          echo "::set-output name=COMMIT_INFO::"${{ steps.deque-message.outputs.result }}""
   create-branch:
     runs-on: ubuntu-latest
     needs: [ dequeue ]
