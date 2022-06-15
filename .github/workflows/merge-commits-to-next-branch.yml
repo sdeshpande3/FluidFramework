@@ -57,10 +57,7 @@ jobs:
     if: (needs.dequeue.result) == 'success'
     steps:
       - run:
-          echo ${{needs.dequeue.outputs.COMMIT_INFO}}
-          echo "${{needs.dequeue.outputs.LABEL}}"
-          echo "${{needs.dequeue.outputs.AUTHOR}}"
-          echo "${{needs.dequeue.outputs.SHA}}"
+          echo ${{needs.dequeue.outputs.LABEL}}
 
 #   - name: Git checkout
 #     if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
