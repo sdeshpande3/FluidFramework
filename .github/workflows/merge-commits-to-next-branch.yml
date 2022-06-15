@@ -34,7 +34,7 @@ jobs:
             echo "::set-output name=COMMIT_INFO :: firstMessage"
   create-branch:
     runs-on: ubuntu-latest
-    if: ( $COMMIT_INFO.label == 'queued' )
+    # if: ( $COMMIT_INFO.label == 'queued' )
     steps:
       - name: Create branch
         uses: actions/github-script@7a5c598405937d486b0331594b5da2b14db670da # pin@v6
