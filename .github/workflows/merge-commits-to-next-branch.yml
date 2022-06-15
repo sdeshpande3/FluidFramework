@@ -46,15 +46,17 @@ jobs:
         with:
           fetch-depth: '0'
       - name: Create branch
+        if: (${{needs.dequeue.outputs.COMMIT_INFO}}).label == 'queued'
         run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
           git fetch origin
           git checkout test_next
           git checkout -b main-next-sha
           git merge sha --no-ff
   # reset-branch:
   #   runs-on: ubuntu-latest
-  #   if: ( ${{ env.COMMIT_INFO }}.label == 'queued' && needs.create-branch.result == 'failure'
-  #     )
+  #   if: ( ${{ env.COMMIT_INFO }}.label == 'queued' && needs.create-branch.result == 'failure')
   #   steps:
   #     - name: Reset main to a commit
   #       uses: actions/github-script@7a5c598405937d486b0331594b5da2b14db670da # pin@v6
