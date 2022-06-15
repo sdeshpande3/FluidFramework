@@ -29,20 +29,20 @@ jobs:
             const queueClient = queueServiceClient.getQueueClient(queueName);
             var receivedMessages = await queueClient.receiveMessages();
             const message = receivedMessages.receivedMessageItems[0];
-            const firstMessage = JSON.parse(message.messageText);
-            console.log("Commit info---", firstMessage);
-  # create-branch:
-  #   runs-on: ubuntu-latest
-  #   if: ( ${{ env.COMMIT_INFO }}.label == 'queued' )
-  #   steps:
-  #     - name: Create branch
-  #       uses: actions/github-script@7a5c598405937d486b0331594b5da2b14db670da # pin@v6
-  #       with:
-  #         script: |
-  #           git fetch origin
-  #           git checkout $TARGET_BRANCH
-  #           git checkout -b main-next-(${{ env.COMMIT_INFO }}.sha)
-  #           git merge ${{ env.COMMIT_INFO }}.sha --no-ff
+            COMMIT_INFO = JSON.parse(message.messageText);
+            console.log("Commit info---", COMMIT_INFO);
+  create-branch:
+    runs-on: ubuntu-latest
+    if: ( (${{ env.COMMIT_INFO }}).label == 'queued' )
+    steps:
+      - name: Create branch
+        uses: actions/github-script@7a5c598405937d486b0331594b5da2b14db670da # pin@v6
+        with:
+          script: |
+            git fetch origin
+            git checkout $TARGET_BRANCH
+            git checkout -b main-next-(${{ env.COMMIT_INFO }}.sha)
+            git merge ${{ env.COMMIT_INFO }}.sha --no-ff
   # reset-branch:
   #   runs-on: ubuntu-latest
   #   if: ( ${{ env.COMMIT_INFO }}.label == 'queued' && needs.create-branch.result == 'failure'
@@ -95,7 +95,7 @@ jobs:
   #       with:
   #         node-version: 14
   #     - run: npm ci
-  #     - run: npm install -g @azure/storage-queue
+  #     - run: npm install @azure/storage-queue
   #     - uses: actions/github-script@7a5c598405937d486b0331594b5da2b14db670da # pin@v6
   #       with:
   #         script: |
@@ -122,7 +122,7 @@ jobs:
   #       with:
   #         node-version: 14
   #     - run: npm ci
-  #     - run: npm install -g @azure/storage-queue
+  #     - run: npm install @azure/storage-queue
   #     - uses: actions/github-script@7a5c598405937d486b0331594b5da2b14db670da # pin@v6
   #       with:
   #         script: |
