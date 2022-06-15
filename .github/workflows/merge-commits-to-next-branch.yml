@@ -34,7 +34,7 @@ jobs:
             console.log("Commit info---", firstMessage.sha);
             console.log("Commit info---", firstMessage.author);
             console.log("Commit info---", firstMessage.label);
-            return message;
+            return firstMessage;
       - name: set output
         id: set
         run: |
@@ -57,6 +57,7 @@ jobs:
     if: (needs.dequeue.result) == 'success'
     steps:
       - run:
+          echo ${{needs.dequeue.outputs.COMMIT_INFO}}
           echo ${{needs.dequeue.outputs.LABEL}}
           echo ${{needs.dequeue.outputs.AUTHOR}}
           echo ${{needs.dequeue.outputs.SHA}}
