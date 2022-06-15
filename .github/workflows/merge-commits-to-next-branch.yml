@@ -46,12 +46,12 @@ jobs:
     steps:
       - run: echo "${{needs.dequeue.outputs.COMMIT_INFO}}"
       - name: Git checkout
-        if: $label == 'queued'
+        if: (${{needs.dequeue.outputs.COMMIT_INFO}}).label == 'queued'
         uses: actions/checkout@v2
         with:
           fetch-depth: '0'
       - name: Create branch
-        if: $label == 'queued'
+        if: (${{needs.dequeue.outputs.COMMIT_INFO}}).label == 'queued'
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
