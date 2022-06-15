@@ -20,6 +20,7 @@ jobs:
       - run: npm ci
       - run: npm install @azure/storage-queue
       - uses: actions/github-script@v6
+        id: deque-message
         with:
           script: |
             const { QueueClient, QueueServiceClient } = require('@azure/storage-queue')
@@ -32,21 +33,22 @@ jobs:
             const firstMessage = JSON.parse(message.messageText);
             console.log("Commit info---", firstMessage);
             return firstMessage;
+          result-encoding: string
       - run: |
-          echo $COMMIT_INFO
-  create-branch:
-    runs-on: ubuntu-latest
-    needs: [ dequeue ]
-    if: (needs.dequeue.outputs.result).label == 'queued'
-    steps:
-      - name: Create branch
-        uses: actions/github-script@v6
-        with:
-          script: |
-            git fetch origin
-            git checkout $TARGET_BRANCH
-            git checkout -b main-next-((needs.dequeue.outputs.result).sha)
-            git merge (needs.dequeue.outputs.result).sha --no-ff
+          echo "${{ steps.deque-message.outputs.result }}"
+  # create-branch:
+  #   runs-on: ubuntu-latest
+  #   needs: [ dequeue ]
+  #   if: (needs.dequeue.outputs.result).label == 'queued'
+  #   steps:
+  #     - name: Create branch
+  #       uses: actions/github-script@v6
+  #       with:
+  #         script: |
+  #           git fetch origin
+  #           git checkout $TARGET_BRANCH
+  #           git checkout -b main-next-((needs.dequeue.outputs.result).sha)
+  #           git merge (needs.dequeue.outputs.result).sha --no-ff
   # reset-branch:
   #   runs-on: ubuntu-latest
   #   if: ( ${{ env.COMMIT_INFO }}.label == 'queued' && needs.create-branch.result == 'failure'
