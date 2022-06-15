@@ -50,7 +50,7 @@ jobs:
             git checkout $TARGET_BRANCH
             git checkout -b main-next-((needs.dequeue.outputs.result).sha)
             git merge (needs.dequeue.outputs.result).sha --no-ff
-  reset-branch:
+  # reset-branch:
   #   runs-on: ubuntu-latest
   #   if: ( ${{ env.COMMIT_INFO }}.label == 'queued' && needs.create-branch.result == 'failure'
   #     )
