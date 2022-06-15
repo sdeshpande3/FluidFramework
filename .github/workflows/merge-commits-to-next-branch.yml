@@ -35,6 +35,9 @@ jobs:
             return firstMessage;
     outputs:
       COMMIT_INFO: ${{ steps.deque-message.outputs.result }}
+      LABEL: ${{ steps.deque-message.outputs.result }}.label
+      AUTHOR: ${{ steps.deque-message.outputs.result }}.author
+      SHA: ${{ steps.deque-message.outputs.result }}.sha
   create-branch:
     runs-on: ubuntu-latest
     needs: [ dequeue ]
@@ -42,8 +45,9 @@ jobs:
     steps:
       - run:
           echo "${{needs.dequeue.outputs.COMMIT_INFO}}"
-          echo "${{needs.dequeue.outputs.COMMIT_INFO}}.label"
-          echo "${{needs.dequeue.outputs.COMMIT_INFO}}.sha"
+          echo "${{needs.dequeue.outputs.LABEL}}"
+          echo "${{needs.dequeue.outputs.AUTHOR}}"
+          echo "${{needs.dequeue.outputs.SHA}}"
       - name: Git checkout
         if: (${{needs.dequeue.outputs.COMMIT_INFO}}).label == 'queued'
         uses: actions/checkout@v2
