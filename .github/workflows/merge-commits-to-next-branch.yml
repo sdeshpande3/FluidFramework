@@ -39,7 +39,7 @@ jobs:
   create-branch:
     runs-on: ubuntu-latest
     needs: [ dequeue ]
-    if: ${{ COMMIT_INFO }}.label == 'queued'
+    if: (needs.dequeue.deque-message.outputs.result).label == 'queued'
     steps:
       - name: Create branch
         uses: actions/github-script@v6
