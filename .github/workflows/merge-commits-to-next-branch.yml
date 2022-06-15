@@ -40,9 +40,9 @@ jobs:
     needs: [ dequeue ]
     if: (needs.dequeue.result) == 'success' # check if needs.deque.output.label == 'queued'
     env:
-      label: ${{needs.dequeue.outputs.COMMIT_INFO}}.label
-      sha: ${{needs.dequeue.outputs.COMMIT_INFO}}.sha
-      author: ${{needs.dequeue.outputs.COMMIT_INFO}}.author
+      label: ${{needs.dequeue.outputs.COMMIT_INFO}}[0]
+      sha: ${{needs.dequeue.outputs.COMMIT_INFO}}[2]
+      author: ${{needs.dequeue.outputs.COMMIT_INFO}}[1]
     steps:
       - run:
           echo "${{needs.dequeue.outputs.COMMIT_INFO}}"
