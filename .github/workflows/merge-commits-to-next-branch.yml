@@ -38,8 +38,9 @@ jobs:
   create-branch:
     runs-on: ubuntu-latest
     needs: [ dequeue ]
-    if: (needs.dequeue.output.COMMIT_INFO).label == 'success' # check if needs.deque.output.label == 'queued'
+    if: needs.dequeue.result == 'success' # check if needs.deque.output.label == 'queued'
     steps:
+      - run: echo "${{needs.dequeue.outputs.COMMIT_INFO}}"
       - name: Create branch
         uses: actions/github-script@v6
         with:
