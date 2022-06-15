@@ -46,18 +46,18 @@ jobs:
     steps:
       - run: echo "${{needs.dequeue.outputs.COMMIT_INFO}}"
       - name: Git checkout
-        if: (${{needs.dequeue.outputs.COMMIT_INFO}}).label == 'queued'
+        if: $label == 'queued'
         uses: actions/checkout@v2
         with:
           fetch-depth: '0'
       - name: Create branch
-        if: (${{needs.dequeue.outputs.COMMIT_INFO}}).label == 'queued'
+        if: $label == 'queued'
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
           git fetch origin
           git checkout test_next
-          git checkout -b main-next-sha
+          git checkout -b main-next-("$sha")
 # git merge sha --no-ff
   # reset-branch:
   #   runs-on: ubuntu-latest
