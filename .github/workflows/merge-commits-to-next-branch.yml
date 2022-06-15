@@ -44,7 +44,10 @@ jobs:
       sha: (${{needs.dequeue.outputs.COMMIT_INFO}}).sha
       author: (${{needs.dequeue.outputs.COMMIT_INFO}}).author
     steps:
-      - run: echo "${{needs.dequeue.outputs.COMMIT_INFO}}"
+      - run:
+          echo "${{needs.dequeue.outputs.COMMIT_INFO}}"
+          echo $label
+          echo $sha
       - name: Git checkout
         if: (${{needs.dequeue.outputs.COMMIT_INFO}}).label == 'queued'
         uses: actions/checkout@v2
@@ -57,7 +60,7 @@ jobs:
           git config user.email "<>"
           git fetch origin
           git checkout test_next
-          git checkout -b main-next-("$sha")
+          git checkout -b main-next-"$sha"
 # git merge sha --no-ff
   # reset-branch:
   #   runs-on: ubuntu-latest
