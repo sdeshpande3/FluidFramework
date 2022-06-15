@@ -33,7 +33,7 @@ jobs:
             console.log("Commit info---", COMMIT_INFO);
   create-branch:
     runs-on: ubuntu-latest
-    if: ( (${{ env.COMMIT_INFO }}).label == 'queued' )
+    if: ( $COMMIT_INFO.label == 'queued' )
     steps:
       - name: Create branch
         uses: actions/github-script@7a5c598405937d486b0331594b5da2b14db670da # pin@v6
