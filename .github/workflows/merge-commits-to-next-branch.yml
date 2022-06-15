@@ -46,7 +46,7 @@ jobs:
         with:
           script: |
             git fetch origin
-            git checkout $TARGET_BRANCH
+            git checkout test_next
             git checkout -b main-next-((needs.dequeue.result).sha)
             git merge (needs.dequeue.result).sha --no-ff
   # reset-branch:
