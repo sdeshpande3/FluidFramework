@@ -55,7 +55,7 @@ jobs:
       - name: Create branch
         if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
         run: |
-          git config user.name "GitHub Actions Bot"
+          git config user.name "Automation Bot"
           git config user.email "<>"
           git fetch origin
           git checkout test_next
@@ -103,10 +103,38 @@ jobs:
           branch: fix_conflicts
           base: test_next
           title: My pull request
-  update-commit-status:
+  # update-commit-status:
+  #   runs-on: ubuntu-latest
+  #   needs: [ createPullRequest, dequeue ]
+  #   if: needs.createPullRequest.result == 'success'
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: actions/setup-node@v2
+  #       with:
+  #         node-version: 14
+  #     - run: npm ci
+  #     - run: npm install @azure/storage-queue
+  #     - uses: actions/github-script@v6
+  #       with:
+  #         script: |
+  #           const { QueueClient, QueueServiceClient } = require('@azure/storage-queue')
+  #           const connectionString = `${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}`;
+  #           const queueServiceClient = QueueServiceClient.fromConnectionString(connectionString);
+  #           const queueName = `${{ secrets.AZURE_QUEUE_NAME }}`;
+  #           const queueClient = queueServiceClient.getQueueClient(queueName);
+  #           const receivedMessages = await queueClient.receiveMessages();
+  #           const firstMessage = receivedMessages.receivedMessageItems[0];
+  #           console.log("receivedMessages: ", firstMessage);
+  #           await queueClient.updateMessage(
+  #               firstMessage.sha,
+  #               firstMessage.author,
+  #               'in-progress');
+  remove-from-queue:
     runs-on: ubuntu-latest
     needs: [ createPullRequest, dequeue ]
-    if: needs.createPullRequest.result == 'success'
+    if: ( needs.createPullRequest.result == 'success' ) &&
+      (needs.createPullRequest.result.action == 'closed' ||
+      needs.createPullRequest.result.merged == 'true' )
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -123,33 +151,6 @@ jobs:
             const queueName = `${{ secrets.AZURE_QUEUE_NAME }}`;
             const queueClient = queueServiceClient.getQueueClient(queueName);
             const receivedMessages = await queueClient.receiveMessages();
-            console.log("receivedMessages: ", receivedMessages);
-            const firstMessage = receivedMessages.receivedMessageItems[0];
-            await queueClient.updateMessage(
-                firstMessage.sha,
-                firstMessage.author,
-                'in-progress');
-  # remove-from-queue:
-  #   runs-on: ubuntu-latest
-  #   needs: [ createPullRequest, dequeue ]
-  #   if: ( needs.createPullRequest.result == 'success' ) &&
-  #     (needs.createPullRequest.result.action == 'closed' ||
-  #     needs.createPullRequest.result.merged == 'true' )
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: actions/setup-node@v2
-  #       with:
-  #         node-version: 14
-  #     - run: npm ci
-  #     - run: npm install @azure/storage-queue
-  #     - uses: actions/github-script@v6
-  #       with:
-  #         script: |
-  #           const { QueueClient, QueueServiceClient } = require('@azure/storage-queue')
-  #           const connectionString = `${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}`;
-  #           const queueServiceClient = QueueServiceClient.fromConnectionString(connectionString);
-  #           const queueName = `${{ secrets.AZURE_QUEUE_NAME }}`;
-  #           const queueClient = queueServiceClient.getQueueClient(queueName);
-  #           receivedMessages = await queueClient.receiveMessages();
-  #           var message = receivedMessages.receivedMessageItems[0];
-  #           await queueClient.deleteMessage(message.messageId, message.popReceipt);
+            var message = receivedMessages.receivedMessageItems[0];
+            console.log("message: ", message);
+            await queueClient.deleteMessage(message.messageId, message.popReceipt);
