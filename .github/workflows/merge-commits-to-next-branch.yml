@@ -56,13 +56,13 @@ jobs:
         if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
         uses: actions/checkout@v2
         with:
-          fetch-depth: '0'
           token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: '0'
       - name: Create branch
         if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
         run: |
-          git config user.name "Sonali Deshpande"
-          git config user.email "sonalivdeshpande96@gmail.com"
+          git config user.name "Automation Bot"
+          git config user.email "<>"
           git fetch origin
           git checkout test_next
           git checkout -b main-next-${{needs.dequeue.outputs.SHA}}
