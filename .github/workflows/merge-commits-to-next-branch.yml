@@ -18,6 +18,9 @@ jobs:
           node-version: 14
       - run: npm ci
       - run: npm install @azure/storage-queue
+      - run: |
+          echo ${{ github.respository }}
+          echo ${{ github.event.repository.name }}
       - uses: actions/github-script@v6
         id: deque-message
         with:
@@ -103,32 +106,6 @@ jobs:
           branch: fix_conflicts
           base: test_next
           title: My pull request
-  # update-commit-status:
-  #   runs-on: ubuntu-latest
-  #   needs: [ createPullRequest, dequeue ]
-  #   if: needs.createPullRequest.result == 'success'
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: actions/setup-node@v2
-  #       with:
-  #         node-version: 14
-  #     - run: npm ci
-  #     - run: npm install @azure/storage-queue
-  #     - uses: actions/github-script@v6
-  #       with:
-  #         script: |
-  #           const { QueueClient, QueueServiceClient } = require('@azure/storage-queue')
-  #           const connectionString = `${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}`;
-  #           const queueServiceClient = QueueServiceClient.fromConnectionString(connectionString);
-  #           const queueName = `${{ secrets.AZURE_QUEUE_NAME }}`;
-  #           const queueClient = queueServiceClient.getQueueClient(queueName);
-  #           const receivedMessages = await queueClient.receiveMessages();
-  #           const firstMessage = receivedMessages.receivedMessageItems[0];
-  #           console.log("receivedMessages: ", firstMessage);
-  #           await queueClient.updateMessage(
-  #               firstMessage.messageId,
-  #                 firstMessage.popReceipt,
-  #               'in-progress');
   remove-from-queue:
     runs-on: ubuntu-latest
     needs: [ createPullRequest, dequeue ]
