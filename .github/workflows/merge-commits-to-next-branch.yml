@@ -8,21 +8,6 @@ env:
   TARGET_BRANCH: test_next
   SOURCE_BRANCH: test_main
 
-permissions:
-  actions: read|write|none
-  checks: read|write|none
-  contents: read|write|none
-  deployments: read|write|none
-  id-token: read|write|none
-  issues: read|write|none
-  discussions: read|write|none
-  packages: read|write|none
-  pages: read|write|none
-  pull-requests: read|write|none
-  repository-projects: read|write|none
-  security-events: read|write|none
-  statuses: read|write|none
-
 jobs:
   dequeue:  # update message queue to in-progress
     runs-on: ubuntu-latest
@@ -58,6 +43,10 @@ jobs:
       SHA: ${{ fromJSON(steps.deque-message.outputs.result).sha }}
   create-branch:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      issues: write
+      repository-projects: write
     needs: [ dequeue ]
     if: (needs.dequeue.result) == 'success'
     steps:
