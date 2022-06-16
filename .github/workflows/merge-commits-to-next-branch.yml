@@ -123,10 +123,11 @@ jobs:
             const queueName = `${{ secrets.AZURE_QUEUE_NAME }}`;
             const queueClient = queueServiceClient.getQueueClient(queueName);
             const receivedMessages = await queueClient.receiveMessages();
+            console.log("receivedMessages: ", receivedMessages);
             const firstMessage = receivedMessages.receivedMessageItems[0];
             await queueClient.updateMessage(
                 firstMessage.sha,
-                firstMessage.assignee,
+                firstMessage.author,
                 'in-progress');
   # remove-from-queue:
   #   runs-on: ubuntu-latest
