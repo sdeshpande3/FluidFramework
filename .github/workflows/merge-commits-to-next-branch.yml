@@ -40,6 +40,7 @@ jobs:
       SHA: ${{ fromJSON(steps.deque-message.outputs.result).sha }}
   create-branch:
     runs-on: ubuntu-latest
+    # permissions: read-all|write-all
     needs: [ dequeue ]
     if: (needs.dequeue.result) == 'success'
     steps:
@@ -60,7 +61,7 @@ jobs:
           git checkout test_next
           git checkout -b main-next-${{needs.dequeue.outputs.SHA}}
           git merge ${{needs.dequeue.outputs.SHA}} --no-ff
-  # git push --set-upstream origin main-next-${{needs.dequeue.outputs.SHA}}
+        # git push --set-upstream origin main-next-${{needs.dequeue.outputs.SHA}}
 # - name: Check branch exists
 #   run: |
 #     git rev-parse --verify main-next-${{needs.dequeue.outputs.SHA}}
