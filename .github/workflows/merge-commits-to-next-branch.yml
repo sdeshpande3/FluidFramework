@@ -47,6 +47,8 @@ jobs:
       pull-requests: write
       issues: write
       repository-projects: write
+      checks: write
+      actions: write
     needs: [ dequeue ]
     if: (needs.dequeue.result) == 'success'
     steps:
