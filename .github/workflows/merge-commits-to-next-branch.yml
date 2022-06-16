@@ -59,6 +59,7 @@ jobs:
           git checkout test_next
           git checkout -b main-next-${{needs.dequeue.outputs.SHA}}
           git merge ${{needs.dequeue.outputs.SHA}} --no-ff
+          git push --upstream origin main-next-${{needs.dequeue.outputs.SHA}}
       - name: Check branch exists
         run: |
           git rev-parse --verify main-next-${{needs.dequeue.outputs.SHA}}
