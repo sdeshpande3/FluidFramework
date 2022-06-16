@@ -8,6 +8,8 @@ env:
   TARGET_BRANCH: test_next
   SOURCE_BRANCH: test_main
 
+permissions: read-all|write-all
+
 jobs:
   dequeue:  # update message queue to in-progress
     runs-on: ubuntu-latest
@@ -43,7 +45,6 @@ jobs:
       SHA: ${{ fromJSON(steps.deque-message.outputs.result).sha }}
   create-branch:
     runs-on: ubuntu-latest
-    permissions: read-all|write-all
     needs: [ dequeue ]
     if: (needs.dequeue.result) == 'success'
     steps:
