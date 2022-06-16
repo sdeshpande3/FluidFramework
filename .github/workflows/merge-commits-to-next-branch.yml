@@ -59,6 +59,9 @@ jobs:
           git checkout test_next
           git checkout -b main-next-${{needs.dequeue.outputs.SHA}}
           git merge ${{needs.dequeue.outputs.SHA}} --no-ff
+      - name: Check branch exists
+        run: |
+          git rev-parse --verify main-next-${{needs.dequeue.outputs.SHA}}
   reset-branch:
     runs-on: ubuntu-latest
     needs: [ dequeue, create-branch ]
