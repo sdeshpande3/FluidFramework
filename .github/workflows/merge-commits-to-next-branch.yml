@@ -61,8 +61,8 @@ jobs:
       - name: Create branch
         if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
         run: |
-          git config user.name "Automation Bot"
-          git config user.email "<>"
+          git config user.name "Sonali Deshpande"
+          git config user.email "sonalivdeshpande96@gmail.com"
           git fetch origin
           git checkout test_next
           git checkout -b main-next-${{needs.dequeue.outputs.SHA}}
