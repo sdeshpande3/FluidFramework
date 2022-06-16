@@ -43,9 +43,9 @@ jobs:
       SHA: ${{ fromJSON(steps.deque-message.outputs.result).sha }}
   create-branch:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: write
+    # permissions:
+    #   contents: write
+    #   packages: write
     needs: [ dequeue ]
     if: (needs.dequeue.result) == 'success'
     steps:
