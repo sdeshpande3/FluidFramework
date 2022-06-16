@@ -124,7 +124,7 @@ jobs:
         if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
         uses: peter-evans/create-pull-request@v4
         with:
-          branch: test_main
+          branch: fix_conflicts
           base: test_next
           title: My pull request
   # update-commit-status:
