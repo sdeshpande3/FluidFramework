@@ -19,8 +19,9 @@ jobs:
       - run: npm ci
       - run: npm install @azure/storage-queue
       - run: | # find owner/repo events to avoid workflows running aginst forks
-          echo ${{ github.respository }}
+          echo ${{ github.event.respository }}
           echo ${{ github.event.repository.name }}
+          echo ${{ github.event.repository.owner }}
       - uses: actions/github-script@v6
         id: deque-message
         with:
@@ -69,10 +70,10 @@ jobs:
       - name: Check branch exists
         run: |
           git rev-parse --verify main-next-${{needs.dequeue.outputs.SHA}}
-      - name: Reset branch # fix reset branch
-        if: steps.create.result == 'success'
-        run:
-          echo "Success" # reset branch if merge fails
+      # - name: Reset branch # fix reset branch
+      #   if: steps.create.result == 'success'
+      #   run:
+      #     echo "Success" # reset branch if merge fails
   # reset-branch:
   #   runs-on: ubuntu-latest
   #   needs: [ dequeue, create-branch ]
@@ -104,16 +105,23 @@ jobs:
             const { Octokit } = require("@octokit/core");
             const token = `${{ secrets.GITHUB_TOKEN }}`;
             const sha = 'main-next-${{needs.dequeue.outputs.SHA}}';
+            const author = ${{needs.dequeue.outputs.AUTHOR}};
             const octokit = new Octokit({ auth: token })
             const newPr = await octokit.request('POST /repos/{owner}/{repo}/pulls', {
               owner: 'sonalivdeshpande',
               repo: 'FluidFramework',
-              title: 'Amazing new feature',
-              body: 'Please pull these awesome changes in!',
+              title: 'Main Next Integrate',
+              body: 'This commit is queued for getting merged with the next branch. Please make sure to resolve any conflicts/CI failures seen on this PR. Thank you!',
               head: sha,
               base: 'next'
             });
-            console.log("PR data: ", newPr);
+            console.log("PR data: ", newPr.data.number);
+            const addAssignee = await octokit.rest.issues.addAssignees({
+              owner: 'sonalivdeshpande',
+              repo: 'FluidFramework',
+              issue_number: newPr.data.number,
+              assignees: author
+            });
   remove-from-queue:
     runs-on: ubuntu-latest
     needs: [ createPullRequest, dequeue ]
