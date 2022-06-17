@@ -93,8 +93,8 @@ jobs:
   #         git reset --hard ${{needs.dequeue.outputs.SHA}}
   createPullRequest:
     runs-on: ubuntu-latest
-    needs: [ create-branch, dequeue ]
-    if: needs.create-branch.result == 'success'
+    # needs: [ create-branch, dequeue ]
+    # if: needs.create-branch.result == 'success'
     steps:
       - run: npm install @octokit/core
       - name: Create PR using octokit
