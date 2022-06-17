@@ -103,7 +103,7 @@ jobs:
           script: | # add assignee to PR
             const { Octokit } = require("@octokit/core");
             const token = `${{ secrets.GITHUB_TOKEN }}`;
-            const sha = ${{needs.dequeue.outputs.SHA}};
+            const sha = 'main-next-${{needs.dequeue.outputs.SHA}}';
             const octokit = new Octokit({ auth: token })
             const newPr = await octokit.request('POST /repos/{owner}/{repo}/pulls', {
               owner: 'sonalivdeshpande',
