@@ -19,9 +19,8 @@ jobs:
       - run: npm ci
       - run: npm install @azure/storage-queue
       - run: | # find owner/repo events to avoid workflows running aginst forks
-          echo ${{ github.event.respository }}
+          echo ${{ github.event.pull_request.head.repo.owner.login }}
           echo ${{ github.event.repository.name }}
-          echo ${{ github.event.repository.owner }}
       - uses: actions/github-script@v6
         id: deque-message
         with:
