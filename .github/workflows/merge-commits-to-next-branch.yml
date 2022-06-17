@@ -116,7 +116,7 @@ jobs:
         with:
           script: |
             const { Octokit } = require("@octokit/core");
-            const octokit = new Octokit({ auth: ${{ secrets.GITHUB_TOKEN }} })
+            const octokit = new Octokit({ auth: '${{ secrets.GITHUB_TOKEN }}'' })
             await octokit.request('POST /repos/{owner}/{repo}/pulls', {
               owner: 'sonalivdeshpande',
               repo: 'FluidFramework',
