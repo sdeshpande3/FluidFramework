@@ -102,7 +102,6 @@ jobs:
             const { Octokit } = require("@octokit/core");
             const token = `${{ secrets.GITHUB_TOKEN }}`;
             const sha = 'main-next-${{needs.dequeue.outputs.SHA}}';
-            const author = ${{needs.dequeue.outputs.AUTHOR}};
             const octokit = new Octokit({ auth: token })
             const newPr = await octokit.request('POST /repos/{owner}/{repo}/pulls', {
               owner: 'sonalivdeshpande',
@@ -113,6 +112,7 @@ jobs:
               base: 'next'
             });
             console.log("PR data: ", newPr.data.number);
+      # const author = '${{needs.dequeue.outputs.AUTHOR}}';
       # const addAssignee = await octokit.rest.issues.addAssignees({
       #   owner: 'sonalivdeshpande',
       #   repo: 'FluidFramework',
