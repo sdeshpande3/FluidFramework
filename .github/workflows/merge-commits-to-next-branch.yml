@@ -55,7 +55,7 @@ jobs:
         if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
         uses: actions/checkout@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.WORKFLOW_TOKEN }}
           # persist-credentials: false
           fetch-depth: '0'
       - name: Create branch
