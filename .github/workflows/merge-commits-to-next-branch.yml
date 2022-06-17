@@ -114,12 +114,12 @@ jobs:
             const { Octokit } = require("@octokit/rest");
             const octokit = new Octokit();
             octokit.rest.pulls.create({
-            sonalivdeshpande,
-            'https://github.com/sonalivdeshpande/FluidFramework',
-            'test PR',
-            main-next-${{needs.dequeue.outputs.SHA}},
-            next,
-          });
+              sonalivdeshpande,
+              'https://github.com/sonalivdeshpande/FluidFramework',
+              'test PR',
+              main-next-${{needs.dequeue.outputs.SHA}},
+              next,
+            });
   remove-from-queue:
     runs-on: ubuntu-latest
     needs: [ createPullRequest, dequeue ]
