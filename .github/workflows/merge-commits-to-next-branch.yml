@@ -9,63 +9,63 @@ env:
   SOURCE_BRANCH: test_main
 
 jobs:
-  dequeue:  # update message queue to in-progress
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 14
-      - run: npm ci
-      - run: npm install @azure/storage-queue
-      - run: | # find owner/repo events to avoid workflows running aginst forks
-          echo ${{ github.event.pull_request.head.repo.owner.login }}
-          echo ${{ github.event.repository.name }}
-      - uses: actions/github-script@v6
-        id: deque-message
-        with:
-          script: |
-            const { QueueClient, QueueServiceClient } = require('@azure/storage-queue')
-            const connectionString = `${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}`;
-            const queueName = `${{ secrets.AZURE_QUEUE_NAME }}`;
-            const queueServiceClient = QueueServiceClient.fromConnectionString(connectionString);
-            const queueClient = queueServiceClient.getQueueClient(queueName);
-            var receivedMessages = await queueClient.receiveMessages();
-            const message = receivedMessages.receivedMessageItems[0];
-            const firstMessage = JSON.parse(message.messageText);
-            return firstMessage;
-    outputs:
-      LABEL: ${{ fromJSON(steps.deque-message.outputs.result).label }}
-      AUTHOR: ${{ fromJSON(steps.deque-message.outputs.result).author }}
-      SHA: ${{ fromJSON(steps.deque-message.outputs.result).sha }}
-  create-branch:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: write
-    needs: [ dequeue ]
-    if: (needs.dequeue.result) == 'success'
-    steps:
-      - run:
-          echo ${{needs.dequeue.outputs.LABEL}}
-      - name: Git checkout
-        if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
-        uses: actions/checkout@v2
-        with:
-          token: ${{ secrets.WORKFLOW_TOKEN }}
-          fetch-depth: '0'
-      - name: Create branch
-        id: create
-        if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
-        run: |
-          git config user.name "Automation Bot"
-          git config user.email "<>"
-          git fetch origin
-          git checkout test_next
-          git checkout -b main-next-${{needs.dequeue.outputs.SHA}}
-          git fetch --all
-          git merge ${{needs.dequeue.outputs.SHA}} --no-ff
-          git push --set-upstream origin main-next-${{needs.dequeue.outputs.SHA}}
+  # dequeue:  # update message queue to in-progress
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: actions/setup-node@v2
+  #       with:
+  #         node-version: 14
+  #     - run: npm ci
+  #     - run: npm install @azure/storage-queue
+  #     - run: | # find owner/repo events to avoid workflows running aginst forks
+  #         echo ${{ github.event.pull_request.head.repo.owner.login }}
+  #         echo ${{ github.event.repository.name }}
+  #     - uses: actions/github-script@v6
+  #       id: deque-message
+  #       with:
+  #         script: |
+  #           const { QueueClient, QueueServiceClient } = require('@azure/storage-queue')
+  #           const connectionString = `${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}`;
+  #           const queueName = `${{ secrets.AZURE_QUEUE_NAME }}`;
+  #           const queueServiceClient = QueueServiceClient.fromConnectionString(connectionString);
+  #           const queueClient = queueServiceClient.getQueueClient(queueName);
+  #           var receivedMessages = await queueClient.receiveMessages();
+  #           const message = receivedMessages.receivedMessageItems[0];
+  #           const firstMessage = JSON.parse(message.messageText);
+  #           return firstMessage;
+  #   outputs:
+  #     LABEL: ${{ fromJSON(steps.deque-message.outputs.result).label }}
+  #     AUTHOR: ${{ fromJSON(steps.deque-message.outputs.result).author }}
+  #     SHA: ${{ fromJSON(steps.deque-message.outputs.result).sha }}
+  # create-branch:
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: write
+  #     packages: write
+  #   needs: [ dequeue ]
+  #   if: (needs.dequeue.result) == 'success'
+  #   steps:
+  #     - run:
+  #         echo ${{needs.dequeue.outputs.LABEL}}
+  #     - name: Git checkout
+  #       if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
+  #       uses: actions/checkout@v2
+  #       with:
+  #         token: ${{ secrets.WORKFLOW_TOKEN }}
+  #         fetch-depth: '0'
+  #     - name: Create branch
+  #       id: create
+  #       if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
+  #       run: |
+  #         git config user.name "Automation Bot"
+  #         git config user.email "<>"
+  #         git fetch origin
+  #         git checkout test_next
+  #         git checkout -b main-next-${{needs.dequeue.outputs.SHA}}
+  #         git fetch --all
+  #         git merge ${{needs.dequeue.outputs.SHA}} --no-ff
+  #         git push --set-upstream origin main-next-${{needs.dequeue.outputs.SHA}}
       # - name: Reset branch # fix reset branch
       #   if: steps.create.result == 'success'
       #   run:
@@ -90,8 +90,8 @@ jobs:
   #         git reset --hard ${{needs.dequeue.outputs.SHA}}
   createPullRequest:
     runs-on: ubuntu-latest
-    needs: [ create-branch, dequeue ]
-    if: needs.create-branch.result == 'success'
+    # needs: [ create-branch, dequeue ]
+    # if: needs.create-branch.result == 'success'
     steps:
       - run: npm install @octokit/core
       - name: Create PR using octokit
@@ -112,33 +112,33 @@ jobs:
               base: 'next'
             });
             console.log("PR data: ", newPr.data.number);
-      # const author = '${{needs.dequeue.outputs.AUTHOR}}';
-      # const addAssignee = await octokit.rest.issues.addAssignees({
-      #   owner: 'sonalivdeshpande',
-      #   repo: 'FluidFramework',
-      #   issue_number: newPr.data.number,
-      #   assignees: author
-      # });
-  remove-from-queue:
-    runs-on: ubuntu-latest
-    needs: [ createPullRequest, dequeue ]
-    if: ( needs.createPullRequest.result == 'success' )
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 14
-      - run: npm ci
-      - run: npm install @azure/storage-queue
-      - uses: actions/github-script@v6
-        with:
-          script: |
-            const { QueueClient, QueueServiceClient } = require('@azure/storage-queue')
-            const connectionString = `${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}`;
-            const queueServiceClient = QueueServiceClient.fromConnectionString(connectionString);
-            const queueName = `${{ secrets.AZURE_QUEUE_NAME }}`;
-            const queueClient = queueServiceClient.getQueueClient(queueName);
-            const receivedMessages = await queueClient.receiveMessages();
-            var message = receivedMessages.receivedMessageItems[0];
-            console.log("message: ", message);
-            await queueClient.deleteMessage(message.messageId, message.popReceipt);
+            const author = '${{needs.dequeue.outputs.AUTHOR}}';
+          const addAssignee = await octokit.rest.issues.addAssignees({
+            owner: 'sonalivdeshpande',
+            repo: 'FluidFramework',
+            issue_number: newPr.data.number,
+            assignees: author
+          });
+  # remove-from-queue:
+  #   runs-on: ubuntu-latest
+  #   needs: [ createPullRequest, dequeue ]
+  #   if: ( needs.createPullRequest.result == 'success' )
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: actions/setup-node@v2
+  #       with:
+  #         node-version: 14
+  #     - run: npm ci
+  #     - run: npm install @azure/storage-queue
+  #     - uses: actions/github-script@v6
+  #       with:
+  #         script: |
+  #           const { QueueClient, QueueServiceClient } = require('@azure/storage-queue')
+  #           const connectionString = `${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}`;
+  #           const queueServiceClient = QueueServiceClient.fromConnectionString(connectionString);
+  #           const queueName = `${{ secrets.AZURE_QUEUE_NAME }}`;
+  #           const queueClient = queueServiceClient.getQueueClient(queueName);
+  #           const receivedMessages = await queueClient.receiveMessages();
+  #           var message = receivedMessages.receivedMessageItems[0];
+  #           console.log("message: ", message);
+  #           await queueClient.deleteMessage(message.messageId, message.popReceipt);
