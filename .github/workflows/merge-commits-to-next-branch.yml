@@ -96,13 +96,12 @@ jobs:
       - run: npm install @octokit/core
       - name: Create PR
         uses: actions/github-script@v6
-        if: pr
         with:
           token: ${{ secrets.WORKFLOW_TOKEN }}
           script: | # add assignee to PR
             const { Octokit } = require("@octokit/core");
             const token = `${{ secrets.GITHUB_TOKEN }}`;
-            const sha = 'main-next-${{needs.dequeue.outputs.SHA}}';
+            const sha = 'fix_conflicts';
             const octokit = new Octokit({ auth: token })
             const newPr = await octokit.request('POST /repos/{owner}/{repo}/pulls', {
               owner: 'sonalivdeshpande',
@@ -113,22 +112,11 @@ jobs:
               base: 'next'
             });
             console.log("PR data: ", newPr.data.number);
-            return newPr.data.number;
-      - name: Assign author
-        uses: actions/github-script@v6
-        needs: [ pr ]
-        with:
-          token: ${{ secrets.WORKFLOW_TOKEN }}
-          script: | # add assignee to PR
-            const { Octokit } = require("@octokit/core");
-            const token = `${{ secrets.GITHUB_TOKEN }}`;
-            const octokit = new Octokit({ auth: token })
-            const author = '${{needs.dequeue.outputs.AUTHOR}}';
-            console.log("steps: ", steps.pr.result);
+            const author = 'sonalivdeshpande';
             const addAssignee = await octokit.rest.issues.addAssignees({
               owner: 'sonalivdeshpande',
               repo: 'FluidFramework',
-              issue_number: steps.pr.result,
+              issue_number: newPr.data.number,
               assignees: author
             });
   # remove-from-queue:
