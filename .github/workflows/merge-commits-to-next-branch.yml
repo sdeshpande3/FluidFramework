@@ -67,9 +67,6 @@ jobs:
           git fetch --all
           git merge ${{needs.dequeue.outputs.SHA}} --no-ff
           git push --set-upstream origin main-next-${{needs.dequeue.outputs.SHA}}
-      - name: Check branch exists
-        run: |
-          git rev-parse --verify main-next-${{needs.dequeue.outputs.SHA}}
       # - name: Reset branch # fix reset branch
       #   if: steps.create.result == 'success'
       #   run:
@@ -101,6 +98,7 @@ jobs:
       - name: Create PR using octokit
         uses: actions/github-script@v6
         with:
+          token: ${{ secrets.WORKFLOW_TOKEN }}
           script: | # add assignee to PR
             const { Octokit } = require("@octokit/core");
             const token = `${{ secrets.GITHUB_TOKEN }}`;
