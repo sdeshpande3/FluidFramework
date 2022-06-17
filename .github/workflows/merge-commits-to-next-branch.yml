@@ -110,20 +110,21 @@ jobs:
       #     branch: main-next-${{needs.dequeue.outputs.SHA}}
       #     base: test_next
       #     title: My pull request
-      - run: npm install @octokit/rest
+      - run: npm install @octokit/core
       - name: Create PR using octokit
         uses: actions/github-script@v6
         with:
           script: |
-            const { Octokit } = require("@octokit/rest");
-            const octokit = new Octokit();
-            await octokit.rest.pulls.create({
+            const { Octokit } = require("@octokit/core");
+            const octokit = new Octokit({ auth: 'personal-access-token123' })
+            await octokit.request('POST /repos/{owner}/{repo}/pulls', {
               owner: 'sonalivdeshpande',
               repo: 'FluidFramework',
-              title: 'test PR',
+              title: 'Amazing new feature',
+              body: 'Please pull these awesome changes in!',
               head: 'main-next-4aef6ba5e5f17279a7f9eb5f7130960bc24caa4b',
-              base: 'next',
-            });
+              base: 'next'
+            })
   # remove-from-queue:
   #   runs-on: ubuntu-latest
   #   needs: [ createPullRequest, dequeue ]
