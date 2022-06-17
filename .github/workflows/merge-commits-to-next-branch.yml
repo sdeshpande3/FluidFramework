@@ -56,7 +56,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           token: ${{ secrets.WORKFLOW_TOKEN }}
-          # persist-credentials: false
           fetch-depth: '0'
       - name: Create branch
         if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
@@ -99,14 +98,14 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: '0'
-# - name: Check branch exists
-#   run: |
-#     git rev-parse --verify main-next-${{needs.dequeue.outputs.SHA}}
+      - name: Check branch exists
+        run: |
+          git rev-parse --verify main-next-${{needs.dequeue.outputs.SHA}}
       - name: Create Pull Request
         if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
         uses: peter-evans/create-pull-request@v4
         with:
-          branch: fix_conflicts
+          branch: main-next-${{needs.dequeue.outputs.SHA}}
           base: test_next
           title: My pull request
   remove-from-queue:
