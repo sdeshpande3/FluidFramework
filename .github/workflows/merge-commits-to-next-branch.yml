@@ -9,7 +9,7 @@ env:
   SOURCE_BRANCH: test_main
 
 jobs:
-  dequeue:  # update message queue to in-progress
+  dequeue:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -58,7 +58,7 @@ jobs:
           git config user.name "Automation Bot"
           git config user.email "<>"
           git fetch origin
-          git checkout test_next
+          git checkout $TARGET
           git checkout -b main-next-${{needs.dequeue.outputs.SHA}}
           git fetch --all
           git merge ${{needs.dequeue.outputs.SHA}} --no-ff
@@ -108,13 +108,6 @@ jobs:
               body: 'This commit is queued for getting merged with the next branch. Please make sure to resolve any conflicts/CI failures seen on this PR. Thank you!',
               head: sha,
               base: 'next'
-            });
-            console.log("PR data: ", newPr.data.number);
-            const addAssignee = await octokit.rest.issues.addAssignees({
-              owner: 'sonalivdeshpande',
-              repo: 'FluidFramework',
-              issue_number: newPr.data.number,
-              assignees: author
             });
   remove-from-queue:
     runs-on: ubuntu-latest
