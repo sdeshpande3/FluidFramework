@@ -108,6 +108,7 @@ jobs:
       #     title: My pull request
       - run: npm install @octokit/rest
       - name: Create PR using octokit
+        uses: actions/github-script@v6
         with:
           script: |
             const { Octokit } = require("@octokit/rest");
