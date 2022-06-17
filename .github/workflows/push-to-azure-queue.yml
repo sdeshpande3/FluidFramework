@@ -49,6 +49,6 @@ jobs:
             octokit.rest.pulls.createReviewComment({
               owner: 'sonalivdeshpande',
               repo: 'FluidFramework',
-              pull_number: ,
+              pull_number: pr,
               body: 'This commit is queued for merging with the `test_next` branch! Please ignore this PR for now. Contact @microsoft/fluid-cr-infra for help.',
             });

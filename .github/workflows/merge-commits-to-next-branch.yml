@@ -113,12 +113,12 @@ jobs:
               base: 'next'
             });
             console.log("PR data: ", newPr.data.number);
-            const addAssignee = await octokit.rest.issues.addAssignees({
-              owner: 'sonalivdeshpande',
-              repo: 'FluidFramework',
-              issue_number: newPr.data.number,
-              assignees: author
-            });
+      # const addAssignee = await octokit.rest.issues.addAssignees({
+      #   owner: 'sonalivdeshpande',
+      #   repo: 'FluidFramework',
+      #   issue_number: newPr.data.number,
+      #   assignees: author
+      # });
   remove-from-queue:
     runs-on: ubuntu-latest
     needs: [ createPullRequest, dequeue ]
