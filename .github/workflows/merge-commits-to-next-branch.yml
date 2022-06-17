@@ -119,7 +119,7 @@ jobs:
             const octokit = new Octokit();
             await octokit.rest.pulls.create({
               owner: 'sonalivdeshpande',
-              repo: 'https://github.com/sonalivdeshpande/FluidFramework',
+              repo: 'FluidFramework',
               title: 'test PR',
               head: 'main-next-4aef6ba5e5f17279a7f9eb5f7130960bc24caa4b',
               base: 'next',
