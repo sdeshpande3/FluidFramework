@@ -63,6 +63,7 @@ jobs:
           git fetch origin
           git checkout test_next
           git checkout -b main-next-${{needs.dequeue.outputs.SHA}}
+          git fetch --all
           git merge ${{needs.dequeue.outputs.SHA}} --no-ff
           git push --set-upstream origin main-next-${{needs.dequeue.outputs.SHA}}
       - name: Check branch exists
