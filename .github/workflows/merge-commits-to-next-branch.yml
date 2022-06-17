@@ -97,18 +97,28 @@ jobs:
         if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
         uses: actions/checkout@v2
         with:
+          token: ${{ secrets.WORKFLOW_TOKEN }}
           fetch-depth: '0'
-# - name: Check branch exists
-#   run: |
-#     git fetch origin
-#     git rev-parse --verify main-next-${{needs.dequeue.outputs.SHA}}
-      - name: Create Pull Request
-        if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
-        uses: peter-evans/create-pull-request@v4
+      # - name: Create Pull Request
+      #   if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
+      #   uses: peter-evans/create-pull-request@v4
+      #   with:
+      #     branch: main-next-${{needs.dequeue.outputs.SHA}}
+      #     base: test_next
+      #     title: My pull request
+      - run: npm install @octokit/rest
+      - name: Create PR using octokit
         with:
-          branch: main-next-${{needs.dequeue.outputs.SHA}}
-          base: test_next
-          title: My pull request
+          script: |
+            const { Octokit } = require("@octokit/rest");
+            const octokit = new Octokit();
+            octokit.rest.pulls.create({
+            sonalivdeshpande,
+            'https://github.com/sonalivdeshpande/FluidFramework',
+            'test PR',
+            main-next-${{needs.dequeue.outputs.SHA}},
+            next,
+          });
   remove-from-queue:
     runs-on: ubuntu-latest
     needs: [ createPullRequest, dequeue ]
