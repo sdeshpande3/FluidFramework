@@ -11,7 +11,7 @@ env:
 jobs:
   dequeue:
     runs-on: ubuntu-latest
-    if: ${{ github.repositoryUrl }} == 'git://github.com/microsoft/FluidFramework.git'
+    if: ${{ github.repository_owner }} == 'microsoft'
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -115,7 +115,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           token: ${{ secrets.WORKFLOW_TOKEN }}
-          script: | # add assignee to PR
+          script: | # add reviwers to PR
             const { Octokit } = require("@octokit/core");
             const token = `${{ secrets.GITHUB_TOKEN }}`;
             const sha = 'main-next-${{needs.dequeue.outputs.SHA}}';
@@ -129,13 +129,10 @@ jobs:
               head: sha,
               base: 'next'
             });
-            const pr_number = newPr.data.number;
-            console.log("number: ", pr_number);
-            console.log(author);
             await octokit.request('POST /repos/{owner}/{repo}/issues/{issue_number}/assignees', {
               owner: 'sonalivdeshpande',
               repo: 'FluidFramework',
-              issue_number: pr_number,
+              issue_number: newPr.data.number,
               assignees: [ author ]
             });
   remove-from-queue:
