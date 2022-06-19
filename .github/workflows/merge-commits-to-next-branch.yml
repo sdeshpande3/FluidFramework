@@ -18,6 +18,9 @@ jobs:
           node-version: 14
       - run: npm ci
       - run: npm install @azure/storage-queue
+      - run:
+        echo ${{ github.repository_owner }}
+        echo ${{ github.repositoryUrl }}
       - uses: actions/github-script@v6
         id: deque-message
         with:
@@ -125,13 +128,13 @@ jobs:
               head: sha,
               base: 'next'
             });
-            console.log("PR: ", newPr);
             console.log("number: ", newPr.data.number);
+            console.log(author);
             await octokit.rest.issues.addAssignees({
               owner: 'sonalivdeshpande',
               repo: 'FluidFramework',
               issue_number: newPr.data.number,
-              assignees: [ author ]
+              assignees: author
             });
   remove-from-queue:
     runs-on: ubuntu-latest
