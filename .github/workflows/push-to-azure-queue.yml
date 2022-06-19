@@ -7,15 +7,15 @@ on:
 jobs:
   queue-pr:
     runs-on: ubuntu-latest
-    if: ${{ github.event.label.name != 'do-not-merge-in-next' }}
+    if: ${{ github.event.label.name != 'do-not-merge-in-next' }} && ${{ github.repository_owner }} == 'microsoft'
     steps:
-      - uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2
-      - uses: actions/setup-node@1f8c6b94b26d0feae1e387ca63ccbdc44d27b561 # pin@v2
-        with:
-          node-version: 14
-      - run: npm ci
-      - run:
-          echo ${{ github.event.pull_request.number }}
+      # - uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2
+      # - uses: actions/setup-node@1f8c6b94b26d0feae1e387ca63ccbdc44d27b561 # pin@v2
+      #   with:
+      #     node-version: 14
+      # - run: npm ci
+      # - run:
+      #     echo ${{ github.event.pull_request.number }}
       - run: npm install @azure/storage-queue
       - uses: actions/github-script@7a5c598405937d486b0331594b5da2b14db670da # pin@v6
         with:
@@ -46,9 +46,10 @@ jobs:
             const pr = ${{ github.event.pull_request.number }}
             const token = `${{ secrets.GITHUB_TOKEN }}`;
             const octokit = new Octokit({ auth: token })
-            octokit.rest.pulls.createReviewComment({
+            await octokit.request('POST /repos/{owner}/{repo}/pulls/{pull_number}/reviews', {
               owner: 'sonalivdeshpande',
               repo: 'FluidFramework',
               pull_number: pr,
               body: 'This commit is queued for merging with the `test_next` branch! Please ignore this PR for now. Contact @microsoft/fluid-cr-infra for help.',
-            });
+              event: 'COMMENT',
+            })

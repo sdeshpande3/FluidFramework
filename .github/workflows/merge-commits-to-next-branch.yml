@@ -11,14 +11,13 @@ env:
 jobs:
   dequeue:
     runs-on: ubuntu-latest
-    if: ${{ github.repository_owner }} == 'microsoft'
     steps:
+      # - run:
+      #     echo ${{ github.repository_owner }}
+      #     echo ${{ github.repositoryUrl }}
       - run: npm install @azure/storage-queue
-      - run:
-          echo ${{ github.repository_owner }}
-          echo ${{ github.repositoryUrl }}
       - uses: actions/github-script@v6
-        if: '${{ github.repository_owner }}' == 'microsoft' || '${{ github.repositoryUrl }}' == 'git://github.com/microsoft/FluidFramework.git'
+        if: ${{ github.repository_owner }} == 'microsoft'
         id: deque-message
         with:
           script: |
@@ -125,6 +124,7 @@ jobs:
               head: sha,
               base: 'next'
             });
+            console.log("PR: ", newPr);
             await octokit.request('POST /repos/{owner}/{repo}/issues/{issue_number}/assignees', {
               owner: 'sonalivdeshpande',
               repo: 'FluidFramework',
