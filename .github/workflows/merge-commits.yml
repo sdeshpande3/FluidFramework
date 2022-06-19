@@ -67,13 +67,10 @@ jobs:
           git config user.name "Automation Bot"
           git config user.email "<>"
           git fetch origin
-          git checkout $TARGET_BRANCH
+          git checkout $SOURCE_BRANCH
           git checkout -b main-next-${{needs.dequeue.outputs.SHA}}
           git fetch --all
-          git merge ${{needs.dequeue.outputs.SHA}} --no-ff
-          git reset
-          git add .
-          git commit -m "main-next-commits" --allow-empty
+          git reset --hard ${{needs.dequeue.outputs.SHA}}
           git push --set-upstream origin main-next-${{needs.dequeue.outputs.SHA}}
   pull-request:
     runs-on: ubuntu-latest
