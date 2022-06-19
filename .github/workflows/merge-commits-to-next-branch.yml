@@ -13,17 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.repository_owner }} == 'microsoft'
     steps:
-      # - uses: actions/checkout@v2
-      # - uses: actions/setup-node@v2
-      #   with:
-      #     node-version: 14
-      # - run: npm ci
       - run: npm install @azure/storage-queue
       - run:
           echo ${{ github.repository_owner }}
           echo ${{ github.repositoryUrl }}
       - uses: actions/github-script@v6
-        if: ${{ github.repository_owner }} == 'microsoft'
+        if: '${{ github.repository_owner }}' == 'microsoft' || '${{ github.repositoryUrl }}' == 'git://github.com/microsoft/FluidFramework.git'
         id: deque-message
         with:
           script: |
@@ -144,11 +139,6 @@ jobs:
     needs: [ createPullRequest, dequeue ]
     if: ( needs.createPullRequest.result == 'success' )
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 14
-      - run: npm ci
       - run: npm install @azure/storage-queue
       - uses: actions/github-script@v6
         with:
