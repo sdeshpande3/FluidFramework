@@ -36,7 +36,7 @@ jobs:
             const message = receivedMessages.receivedMessageItems[0];
             const firstMessage = JSON.parse(message.messageText);
             if(firstMessage === undefined) {
-              break;
+              return;
             }
             console.log("message----", firstMessage);
             console.log("sha---", firstMessage.sha);
