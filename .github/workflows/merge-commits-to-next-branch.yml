@@ -35,6 +35,9 @@ jobs:
             var receivedMessages = await queueClient.receiveMessages();
             const message = receivedMessages.receivedMessageItems[0];
             const firstMessage = JSON.parse(message.messageText);
+            if(firstMessage === undefined) {
+              return "No commit to queue";
+            }
             console.log("message----", firstMessage);
             console.log("sha---", firstMessage.sha);
             console.log("label---", firstMessage.label);
@@ -66,7 +69,7 @@ jobs:
           git config user.name "Automation Bot"
           git config user.email "<>"
           git fetch origin
-          git checkout $TARGET
+          git checkout $TARGET_BRANCH
           git checkout -b main-next-${{needs.dequeue.outputs.SHA}}
           git fetch --all
           git push --set-upstream origin main-next-${{needs.dequeue.outputs.SHA}}
@@ -111,7 +114,7 @@ jobs:
     concurrency:
       group: group-pr
       cancel-in-progress: false
-    needs: [ create-branch, dequeue ]
+    needs: [ create-branch, dequeue, push-commit, reset-branch ]
     if: needs.create-branch.result == 'success'
     steps:
       - run: npm install @octokit/core
@@ -131,7 +134,7 @@ jobs:
               title: 'Main Next Integrate',
               body: 'This commit is queued for getting merged with the next branch. Please make sure to resolve any conflicts/CI failures seen on this PR. Thank you!',
               head: sha,
-              base: 'next'
+              base: 'test_next'
             });
             await octokit.request('POST /repos/{owner}/{repo}/issues/{issue_number}/assignees', {
               owner: 'sonalivdeshpande',
@@ -144,7 +147,7 @@ jobs:
     concurrency:
       group: group-pr
       cancel-in-progress: false
-    needs: [ createPullRequest, dequeue ]
+    needs: [ createPullRequest ]
     if: ( needs.createPullRequest.result == 'success' )
     steps:
       - uses: actions/checkout@v2
