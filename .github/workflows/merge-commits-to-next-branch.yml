@@ -131,11 +131,11 @@ jobs:
             const pr_number = newPr.data.number;
             console.log("number: ", pr_number);
             console.log(author);
-            await octokit.rest.issues.addAssignees({
+            await octokit.request('POST /repos/{owner}/{repo}/issues/{issue_number}/assignees', {
               owner: 'sonalivdeshpande',
               repo: 'FluidFramework',
               issue_number: pr_number,
-              assignees: author
+              assignees: [ author ]
             });
   remove-from-queue:
     runs-on: ubuntu-latest
