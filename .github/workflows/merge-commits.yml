@@ -35,9 +35,7 @@ jobs:
             var receivedMessages = await queueClient.receiveMessages();
             const message = receivedMessages.receivedMessageItems[0];
             const firstMessage = JSON.parse(message.messageText);
-            if(firstMessage === undefined) {
-              return;
-            }
+            if(firstMessage === undefined) { return; }
             console.log("message----", firstMessage);
             console.log("sha---", firstMessage.sha);
             console.log("label---", firstMessage.label);
@@ -72,53 +70,12 @@ jobs:
           git checkout $TARGET_BRANCH
           git checkout -b main-next-${{needs.dequeue.outputs.SHA}}
           git fetch --all
+          git cherry-pick ${{needs.dequeue.outputs.SHA}} --no-commit --allow-empty
           git push --set-upstream origin main-next-${{needs.dequeue.outputs.SHA}}
-  push-commit:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: write
-    needs: [ create-branch ]
-    if: needs.create-branch.result == 'success'
-    steps:
-      - name: Git checkout
-        if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
-        id: merge-commit
-        uses: actions/checkout@v2
-        with:
-          token: ${{ secrets.WORKFLOW_TOKEN }}
-          fetch-depth: '0'
-      - name: Push to branch
-        run: |
-          git fetch --all
-          git checkout main-next-${{needs.dequeue.outputs.SHA}}
-          git merge ${{needs.dequeue.outputs.SHA}} --no-ff
-          git push
-  cherry-pick:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: write
-    needs: [ push-commit ]
-    if: needs.push-commit.result == 'failure'
-    steps:
-      - name: Git checkout
-        if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
-        id: merge-commit
-        uses: actions/checkout@v2
-        with:
-          token: ${{ secrets.WORKFLOW_TOKEN }}
-          fetch-depth: '0'
-      - name: Push to branch
-        run: |
-          git fetch --all
-          git checkout main-next-${{needs.dequeue.outputs.SHA}}
-          git cherry-pick ${{needs.dequeue.outputs.SHA}}
-          git push
   reset-branch:
     runs-on: ubuntu-latest
-    needs: [ cherry-pick ]
-    if: needs.cherry-pick.result == 'failure'
+    needs: [ create-branch ]
+    if: needs.create-branch.result == 'failure'
     steps:
       - name: Git checkout
         if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
@@ -133,12 +90,12 @@ jobs:
           git branch -D main-next-${{needs.dequeue.outputs.SHA}}
           git checkout -b main-next-${{needs.dequeue.outputs.SHA}}
           git reset --hard ${{needs.dequeue.outputs.SHA}}
-  createPullRequest:
+  pull-request:
     runs-on: ubuntu-latest
     concurrency:
       group: group-pr
       cancel-in-progress: false
-    needs: [ create-branch, dequeue, push-commit ]
+    needs: [ create-branch, dequeue ]
     if: needs.create-branch.result == 'success'
     steps:
       - run: npm install @octokit/core
@@ -171,8 +128,8 @@ jobs:
     concurrency:
       group: group-pr
       cancel-in-progress: false
-    needs: [ createPullRequest ]
-    if: ( needs.createPullRequest.result == 'success' )
+    needs: [ pull-request ]
+    if: ( needs.pull-request.result == 'success' )
     steps:
       # - uses: actions/checkout@v2
       # - uses: actions/setup-node@v2
