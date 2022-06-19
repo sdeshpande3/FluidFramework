@@ -35,6 +35,10 @@ jobs:
             var receivedMessages = await queueClient.receiveMessages();
             const message = receivedMessages.receivedMessageItems[0];
             const firstMessage = JSON.parse(message.messageText);
+            console.log("message----", firstMessage);
+            console.log("sha---", firstMessage.sha);
+            console.log("label---", firstMessage.label);
+            console.log("author---", firstMessage.author);
             return firstMessage;
     outputs:
       LABEL: ${{ fromJSON(steps.deque-message.outputs.result).label }}
@@ -83,6 +87,7 @@ jobs:
           token: ${{ secrets.WORKFLOW_TOKEN }}
           fetch-depth: '0'
       - name: Push to branch
+        id: push
         run: |
           git push
   reset-branch:
@@ -97,6 +102,7 @@ jobs:
           fetch-depth: '0'
       - name: Reset main to a commit
         if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
+        id: reset
         run: |
           git fetch origin
           git checkout $SOURCE_BRANCH
@@ -108,7 +114,7 @@ jobs:
     concurrency:
       group: group-pr
       cancel-in-progress: false
-    needs: [ create-branch, dequeue ]
+    needs: [ create-branch, dequeue, push, reset ]
     if: needs.create-branch.result == 'success'
     steps:
       - run: npm install @octokit/core
