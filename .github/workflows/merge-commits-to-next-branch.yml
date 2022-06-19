@@ -128,12 +128,13 @@ jobs:
               head: sha,
               base: 'next'
             });
-            console.log("number: ", newPr.data.number);
+            const pr_number = newPr.data.number;
+            console.log("number: ", pr_number);
             console.log(author);
             await octokit.rest.issues.addAssignees({
               owner: 'sonalivdeshpande',
               repo: 'FluidFramework',
-              issue_number: newPr.data.number,
+              issue_number: pr_number,
               assignees: author
             });
   remove-from-queue:
