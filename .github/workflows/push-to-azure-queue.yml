@@ -37,6 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ queue-pr ]
     steps:
+      - run: npm install @octokit/core
       - name: Create Comment on PR
         uses: actions/github-script@v6
         with:

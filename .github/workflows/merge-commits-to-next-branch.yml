@@ -114,7 +114,7 @@ jobs:
     concurrency:
       group: group-pr
       cancel-in-progress: false
-    needs: [ create-branch, dequeue, push-commit, reset-branch ]
+    needs: [ create-branch, dequeue, push-commit ]
     if: needs.create-branch.result == 'success'
     steps:
       - run: npm install @octokit/core
