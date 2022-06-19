@@ -19,8 +19,8 @@ jobs:
       - run: npm ci
       - run: npm install @azure/storage-queue
       - run:
-        echo ${{ github.repository_owner }}
-        echo ${{ github.repositoryUrl }}
+          echo ${{ github.repository_owner }}
+          echo ${{ github.repositoryUrl }}
       - uses: actions/github-script@v6
         id: deque-message
         with:
