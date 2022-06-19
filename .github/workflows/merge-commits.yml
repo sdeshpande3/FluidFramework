@@ -71,6 +71,8 @@ jobs:
           git checkout -b main-next-${{needs.dequeue.outputs.SHA}}
           git fetch --all
           git cherry-pick ${{needs.dequeue.outputs.SHA}} --no-commit --allow-empty
+          git add .
+          git commit -m "merge main to next"
           git push --set-upstream origin main-next-${{needs.dequeue.outputs.SHA}}
   reset-branch:
     runs-on: ubuntu-latest
