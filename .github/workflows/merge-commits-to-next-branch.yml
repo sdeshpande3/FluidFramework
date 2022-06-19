@@ -11,6 +11,7 @@ env:
 jobs:
   dequeue:
     runs-on: ubuntu-latest
+    if: ${{ github.repositoryUrl }} == 'git://github.com/microsoft/FluidFramework.git'
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
