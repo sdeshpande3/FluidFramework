@@ -73,7 +73,7 @@ jobs:
           git merge ${{needs.dequeue.outputs.SHA}} --no-ff
           git reset
           git add .
-          git commit -m "main-next-commits"
+          git commit -m "main-next-commits" --allow-empty
           git push --set-upstream origin main-next-${{needs.dequeue.outputs.SHA}}
   pull-request:
     runs-on: ubuntu-latest
