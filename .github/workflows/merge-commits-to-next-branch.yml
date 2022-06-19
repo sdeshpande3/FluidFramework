@@ -69,11 +69,11 @@ jobs:
           git config user.name "Automation Bot"
           git config user.email "<>"
           git fetch origin
-          git checkout next
+          git checkout $TARGET_BRANCH
           git checkout -b main-next-${{needs.dequeue.outputs.SHA}}
           git fetch --all
           git push --set-upstream origin main-next-${{needs.dequeue.outputs.SHA}}
-          git cherry-pick ${{needs.dequeue.outputs.SHA}}
+          git merge ${{needs.dequeue.outputs.SHA}} --no-commit --no-ff
   push-commit:
     runs-on: ubuntu-latest
     permissions:
