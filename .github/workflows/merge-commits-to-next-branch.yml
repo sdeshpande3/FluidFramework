@@ -46,7 +46,6 @@ jobs:
       SHA: ${{ fromJSON(steps.deque-message.outputs.result).sha }}
   create-branch:
     runs-on: ubuntu-latest
-    id: create
     permissions:
       contents: write
       packages: write
@@ -74,7 +73,6 @@ jobs:
           git merge ${{needs.dequeue.outputs.SHA}} --no-ff
   push-commit:
     runs-on: ubuntu-latest
-    id: push
     permissions:
       contents: write
       packages: write
@@ -92,7 +90,6 @@ jobs:
           git push
   reset-branch:
     runs-on: ubuntu-latest
-    id: reset
     needs: [ create-branch ]
     if: needs.create-branch.result == 'failure'
     steps:
@@ -114,7 +111,7 @@ jobs:
     concurrency:
       group: group-pr
       cancel-in-progress: false
-    needs: [ create-branch, dequeue, push, reset ]
+    needs: [ create-branch, dequeue ]
     if: needs.create-branch.result == 'success'
     steps:
       - run: npm install @octokit/core
