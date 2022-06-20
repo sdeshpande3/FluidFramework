@@ -27,9 +27,9 @@ jobs:
             const queueName = `${{ secrets.AZURE_QUEUE_NAME }}`;
             const queueServiceClient = QueueServiceClient.fromConnectionString(connectionString);
             const queueClient = queueServiceClient.getQueueClient(queueName);
-            var receivedMessages = await queueClient.receiveMessages();
-            const message = receivedMessages.receivedMessageItems[0];
-            const firstMessage = JSON.parse(message.messageText);
+            var receivedMessages = await queueClient.peekMessages();
+            const message = receivedMessages.peekedMessageItems[0].messageText;
+            const firstMessage = JSON.parse(message);
             if(firstMessage === undefined) { return 0; }
             console.log("message----", firstMessage);
             console.log("sha---", firstMessage.sha);
