@@ -129,4 +129,8 @@ jobs:
             receivedMessages = await queueClient.receiveMessages();
             var message = receivedMessages.receivedMessageItems[0];
             console.log("Dequeuing message: ", message.messageText);
-            await queueClient.deleteMessage(message.messageId, message.popReceipt);
+            try {
+              await queueClient.deleteMessage(message.messageId, message.popReceipt);
+            } catch (err) {
+              console.log("ERR!!--", error);
+            }
