@@ -117,6 +117,7 @@ jobs:
     needs: [ pull-request, dequeue ]
     if: ( needs.pull-request.result == 'success' )
     steps:
+      - run: npm ci
       - run: npm install @azure/storage-queue
       - uses: actions/github-script@v6
         with:
@@ -128,7 +129,7 @@ jobs:
             const queueClient = queueServiceClient.getQueueClient(queueName);
             receivedMessages = await queueClient.receiveMessages();
             var message = receivedMessages.receivedMessageItems[0];
-            console.log("Dequeuing message: ", message.messageText);
+            console.log("Deleting message: ", message.messageText);
             try {
               await queueClient.deleteMessage(message.messageId, message.popReceipt);
             } catch (err) {
