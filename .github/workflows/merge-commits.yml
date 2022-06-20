@@ -37,6 +37,7 @@ jobs:
             console.log("author---", firstMessage.author);
             const updateMsg = { "sha": firstMessage.sha, "author": firstMessage.author, "label": "in-progress" };
             const updateQueue = await queueClient.updateMessage(message.messageId, message.popReceipt, JSON.stringify(updateMsg));
+            console.log("updateQueue---", updateQueue);
             firstMessage.popReceipt =  updateQueue.popReceipt;
             firstMessage.messageId =  updateQueue.messageId;
             console.log("first message--", firstMessage);
@@ -47,92 +48,92 @@ jobs:
       SHA: ${{ fromJSON(steps.deque-message.outputs.result).sha }}
       POP_RECEIPT: ${{ fromJSON(steps.deque-message.outputs.result).popReceipt }}
       MESSAGE_ID: ${{ fromJSON(steps.deque-message.outputs.result).messageId }}
-  create-branch:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: write
-    needs: [ dequeue ]
-    if: (needs.dequeue.result) == 'success'
-    steps:
-      - run:
-          echo ${{needs.dequeue.outputs.LABEL}}
-      - name: Git checkout
-        if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
-        uses: actions/checkout@v2
-        with:
-          token: ${{ secrets.WORKFLOW_TOKEN }}
-          fetch-depth: '0'
-      - name: Create branch
-        if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
-        run: |
-          git config user.name "Automation Bot"
-          git config user.email "<>"
-          git fetch origin
-          git checkout $SOURCE_BRANCH
-          git checkout -b main-next-${{needs.dequeue.outputs.SHA}}
-          git fetch --all
-          git reset --hard ${{needs.dequeue.outputs.SHA}}
-          git push --set-upstream origin main-next-${{needs.dequeue.outputs.SHA}}
-  pull-request:
-    runs-on: ubuntu-latest
-    concurrency:
-      group: group-pr
-      cancel-in-progress: false
-    needs: [ create-branch, dequeue ]
-    if: needs.create-branch.result == 'success'
-    steps:
-      - run: npm install @octokit/core
-      - name: Create PR using octokit
-        uses: actions/github-script@v6
-        with:
-          token: ${{ secrets.WORKFLOW_TOKEN }}
-          script: | # add reviwers to PR
-            const { Octokit } = require("@octokit/core");
-            const token = `${{ secrets.GITHUB_TOKEN }}`;
-            const sha = 'main-next-${{needs.dequeue.outputs.SHA}}';
-            const author = '${{needs.dequeue.outputs.AUTHOR}}';
-            const octokit = new Octokit({ auth: token })
-            const newPr = await octokit.request('POST /repos/{owner}/{repo}/pulls', {
-              owner: 'sonalivdeshpande',
-              repo: 'FluidFramework',
-              title: 'Main Next Integrate',
-              body: 'This commit is queued for getting merged with the next branch. Please make sure to resolve any conflicts/CI failures seen on this PR. Thank you!',
-              head: sha,
-              base: 'next'
-            });
-            await octokit.request('POST /repos/{owner}/{repo}/issues/{issue_number}/assignees', {
-              owner: 'sonalivdeshpande',
-              repo: 'FluidFramework',
-              issue_number: newPr.data.number,
-              assignees: [ author ]
-            });
-  # // await till PR status changes to approved
-  # const prReview = async () => {
-  #   await octokit.request('GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews', {
-  #     owner: 'sonalivdeshpande',
-  #     repo: 'FluidFramework',
-  #     pull_number: newPr.data.number,
-  #   });
-  # }
-  # if(prReview.status !== 'APPROVED') { prReview.status = setInterval(() => { prReview() }, 20000); }
-  remove-from-queue:
-    runs-on: ubuntu-latest
-    concurrency:
-      group: group-pr
-      cancel-in-progress: false
-    needs: [ pull-request, dequeue ]
-    if: ( needs.pull-request.result == 'success' )
-    steps:
-      - run: npm install @azure/storage-queue
-      - uses: actions/github-script@v6
-        with:
-          script: |
-            const { QueueClient, QueueServiceClient } = require('@azure/storage-queue')
-            const connectionString = `${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}`;
-            const queueServiceClient = QueueServiceClient.fromConnectionString(connectionString);
-            const queueName = `${{ secrets.AZURE_QUEUE_NAME }}`;
-            const queueClient = queueServiceClient.getQueueClient(queueName);
-            const messageId = '${{needs.dequeue.outputs.MESSAGE_ID}}';
-            const popReceipt = '${{needs.dequeue.outputs.POP_RECEIPT}}';
-            await queueClient.deleteMessage(messageId, popReceipt);
+  # create-branch:
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: write
+  #     packages: write
+  #   needs: [ dequeue ]
+  #   if: (needs.dequeue.result) == 'success'
+  #   steps:
+  #     - run:
+  #         echo ${{needs.dequeue.outputs.LABEL}}
+  #     - name: Git checkout
+  #       if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
+  #       uses: actions/checkout@v2
+  #       with:
+  #         token: ${{ secrets.WORKFLOW_TOKEN }}
+  #         fetch-depth: '0'
+  #     - name: Create branch
+  #       if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
+  #       run: |
+  #         git config user.name "Automation Bot"
+  #         git config user.email "<>"
+  #         git fetch origin
+  #         git checkout $SOURCE_BRANCH
+  #         git checkout -b main-next-${{needs.dequeue.outputs.SHA}}
+  #         git fetch --all
+  #         git reset --hard ${{needs.dequeue.outputs.SHA}}
+  #         git push --set-upstream origin main-next-${{needs.dequeue.outputs.SHA}}
+  # pull-request:
+  #   runs-on: ubuntu-latest
+  #   concurrency:
+  #     group: group-pr
+  #     cancel-in-progress: false
+  #   needs: [ create-branch, dequeue ]
+  #   if: needs.create-branch.result == 'success'
+  #   steps:
+  #     - run: npm install @octokit/core
+  #     - name: Create PR using octokit
+  #       uses: actions/github-script@v6
+  #       with:
+  #         token: ${{ secrets.WORKFLOW_TOKEN }}
+  #         script: | # add reviwers to PR
+  #           const { Octokit } = require("@octokit/core");
+  #           const token = `${{ secrets.GITHUB_TOKEN }}`;
+  #           const sha = 'main-next-${{needs.dequeue.outputs.SHA}}';
+  #           const author = '${{needs.dequeue.outputs.AUTHOR}}';
+  #           const octokit = new Octokit({ auth: token })
+  #           const newPr = await octokit.request('POST /repos/{owner}/{repo}/pulls', {
+  #             owner: 'sonalivdeshpande',
+  #             repo: 'FluidFramework',
+  #             title: 'Main Next Integrate',
+  #             body: 'This commit is queued for getting merged with the next branch. Please make sure to resolve any conflicts/CI failures seen on this PR. Thank you!',
+  #             head: sha,
+  #             base: 'next'
+  #           });
+  #           await octokit.request('POST /repos/{owner}/{repo}/issues/{issue_number}/assignees', {
+  #             owner: 'sonalivdeshpande',
+  #             repo: 'FluidFramework',
+  #             issue_number: newPr.data.number,
+  #             assignees: [ author ]
+  #           });
+  # # // await till PR status changes to approved
+  # # const prReview = async () => {
+  # #   await octokit.request('GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews', {
+  # #     owner: 'sonalivdeshpande',
+  # #     repo: 'FluidFramework',
+  # #     pull_number: newPr.data.number,
+  # #   });
+  # # }
+  # # if(prReview.status !== 'APPROVED') { prReview.status = setInterval(() => { prReview() }, 20000); }
+  # remove-from-queue:
+  #   runs-on: ubuntu-latest
+  #   concurrency:
+  #     group: group-pr
+  #     cancel-in-progress: false
+  #   needs: [ pull-request, dequeue ]
+  #   if: ( needs.pull-request.result == 'success' )
+  #   steps:
+  #     - run: npm install @azure/storage-queue
+  #     - uses: actions/github-script@v6
+  #       with:
+  #         script: |
+  #           const { QueueClient, QueueServiceClient } = require('@azure/storage-queue')
+  #           const connectionString = `${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}`;
+  #           const queueServiceClient = QueueServiceClient.fromConnectionString(connectionString);
+  #           const queueName = `${{ secrets.AZURE_QUEUE_NAME }}`;
+  #           const queueClient = queueServiceClient.getQueueClient(queueName);
+  #           const messageId = '${{needs.dequeue.outputs.MESSAGE_ID}}';
+  #           const popReceipt = '${{needs.dequeue.outputs.POP_RECEIPT}}';
+  #           await queueClient.deleteMessage(messageId, popReceipt);
