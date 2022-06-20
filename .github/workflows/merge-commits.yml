@@ -35,12 +35,8 @@ jobs:
             console.log("sha---", firstMessage.sha);
             console.log("label---", firstMessage.label);
             console.log("author---", firstMessage.author);
-            // Update the received message
-            await queueClient.updateMessage(
-                message.messageId,
-                message.popReceipt,
-                "{ "sha": firstMessage.sha, "author": firstMessage.author, "label": "in-progress" }"
-            );
+            const updateMsg = { "sha": firstMessage.sha, "author": firstMessage.author, "label": "in-progress" };
+            await queueClient.updateMessage(message.messageId, message.popReceipt, JSON.stringify(updateMsg));
             return firstMessage;
     outputs:
       LABEL: ${{ fromJSON(steps.deque-message.outputs.result).label }}
