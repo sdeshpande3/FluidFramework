@@ -1,4 +1,4 @@
-name: Push commit to Azure Queue
+name: Push commit to queue
 
 on:
   push:
