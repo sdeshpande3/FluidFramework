@@ -2,7 +2,8 @@ name: Merge commits to next branch
 
 on:
   push:
-    branch: [ test_main ]
+    branches:
+      - 'test_main'
 
 env:
   TARGET_BRANCH: next

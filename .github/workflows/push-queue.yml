@@ -2,7 +2,8 @@ name: Push commit to queue
 
 on:
   push:
-    branch: [ test_main ]
+    branches:
+      - 'test_main'
 
 jobs:
   queue-pr:
