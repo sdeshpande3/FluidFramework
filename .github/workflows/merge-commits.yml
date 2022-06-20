@@ -101,15 +101,16 @@ jobs:
               issue_number: newPr.data.number,
               assignees: [ author ]
             });
-  # // await till PR status changes to approved
-  # const prReview = async () => {
-  #   await octokit.request('GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews', {
-  #     owner: 'sonalivdeshpande',
-  #     repo: 'FluidFramework',
-  #     pull_number: newPr.data.number,
-  #   });
-  # }
-  # if(prReview.status !== 'APPROVED') { prReview.status = setInterval(() => { prReview() }, 20000); }
+            // await till PR status changes to approved
+            const prReview = async () => {
+              await octokit.request('GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews', {
+                owner: 'sonalivdeshpande',
+                repo: 'FluidFramework',
+                pull_number: newPr.data.number,
+              });
+            }
+            console.log("status: ", prReview.status)
+            if(prReview.status !== 'APPROVED') { prReview.status = setInterval(() => { prReview() }, 20000); }
   remove-from-queue:
     runs-on: ubuntu-latest
     concurrency:
