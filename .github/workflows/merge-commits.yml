@@ -3,7 +3,7 @@ name: Merge commits to next branch
 on:
   push:
     branches:
-      - 'test_main'
+      - 'fix-workflow'
 
 env:
   TARGET_BRANCH: next
@@ -110,7 +110,7 @@ jobs:
               });
             }
             console.log("status: ", prReview.status)
-            if(prReview.status !== 'APPROVED') { prReview.status = setInterval(() => { prReview() }, 20000); }
+            // if(prReview.status !== 'APPROVED') { prReview.status = setInterval(() => { prReview() }, 20000); }
   remove-from-queue:
     runs-on: ubuntu-latest
     concurrency:

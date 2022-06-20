@@ -3,7 +3,7 @@ name: Push commit to queue
 on:
   push:
     branches:
-      - 'test_main'
+      - 'fix-workflow'
 
 jobs:
   queue-pr:
