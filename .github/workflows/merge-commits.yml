@@ -13,11 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.repository_owner }} == 'microsoft'
     steps:
-      # - uses: actions/checkout@v2
-      # - uses: actions/setup-node@v2
-      #   with:
-      #     node-version: 14
-      # - run: npm ci
       - run: npm install @azure/storage-queue
       - run:
           echo ${{ github.repository_owner }}
@@ -35,7 +30,7 @@ jobs:
             var receivedMessages = await queueClient.receiveMessages();
             const message = receivedMessages.receivedMessageItems[0];
             const firstMessage = JSON.parse(message.messageText);
-            if(firstMessage === undefined) { return; }
+            if(firstMessage === undefined) { return 0; }
             console.log("message----", firstMessage);
             console.log("sha---", firstMessage.sha);
             console.log("label---", firstMessage.label);
@@ -113,11 +108,6 @@ jobs:
     needs: [ pull-request ]
     if: ( needs.pull-request.result == 'success' )
     steps:
-      # - uses: actions/checkout@v2
-      # - uses: actions/setup-node@v2
-      #   with:
-      #     node-version: 14
-      # - run: npm ci
       - run: npm install @azure/storage-queue
       - uses: actions/github-script@v6
         with:
