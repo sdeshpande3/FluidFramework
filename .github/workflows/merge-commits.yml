@@ -36,12 +36,17 @@ jobs:
             console.log("label---", firstMessage.label);
             console.log("author---", firstMessage.author);
             const updateMsg = { "sha": firstMessage.sha, "author": firstMessage.author, "label": "in-progress" };
-            await queueClient.updateMessage(message.messageId, message.popReceipt, JSON.stringify(updateMsg));
+            const updateQueue = await queueClient.updateMessage(message.messageId, message.popReceipt, JSON.stringify(updateMsg));
+            firstMessage.popReceipt =  updateQueue.popReceipt;
+            firstMessage.messageId =  updateQueue.messageId;
+            console.log("first message--", firstMessage);
             return firstMessage;
     outputs:
       LABEL: ${{ fromJSON(steps.deque-message.outputs.result).label }}
       AUTHOR: ${{ fromJSON(steps.deque-message.outputs.result).author }}
       SHA: ${{ fromJSON(steps.deque-message.outputs.result).sha }}
+      POP_RECEIPT: ${{ fromJSON(steps.deque-message.outputs.result).popReceipt }}
+      MESSAGE_ID: ${{ fromJSON(steps.deque-message.outputs.result).messageId }}
   create-branch:
     runs-on: ubuntu-latest
     permissions:
@@ -102,12 +107,21 @@ jobs:
               issue_number: newPr.data.number,
               assignees: [ author ]
             });
+  # // await till PR status changes to approved
+  # const prReview = async () => {
+  #   await octokit.request('GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews', {
+  #     owner: 'sonalivdeshpande',
+  #     repo: 'FluidFramework',
+  #     pull_number: newPr.data.number,
+  #   });
+  # }
+  # if(prReview.status !== 'APPROVED') { prReview.status = setInterval(() => { prReview() }, 20000); }
   remove-from-queue:
     runs-on: ubuntu-latest
     concurrency:
       group: group-pr
       cancel-in-progress: false
-    needs: [ pull-request ]
+    needs: [ pull-request, dequeue ]
     if: ( needs.pull-request.result == 'success' )
     steps:
       - run: npm install @azure/storage-queue
@@ -119,7 +133,6 @@ jobs:
             const queueServiceClient = QueueServiceClient.fromConnectionString(connectionString);
             const queueName = `${{ secrets.AZURE_QUEUE_NAME }}`;
             const queueClient = queueServiceClient.getQueueClient(queueName);
-            const receivedMessages = await queueClient.receiveMessages();
-            var message = receivedMessages.receivedMessageItems[0];
-            console.log("message: ", message);
-            await queueClient.deleteMessage(message.messageId, message.popReceipt);
+            const messageId = '${{needs.dequeue.outputs.MESSAGE_ID}}';
+            const popReceipt = '${{needs.dequeue.outputs.POP_RECEIPT}}';
+            await queueClient.deleteMessage(messageId, popReceipt);
