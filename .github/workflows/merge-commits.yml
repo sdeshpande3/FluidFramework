@@ -134,6 +134,7 @@ jobs:
             const queueServiceClient = QueueServiceClient.fromConnectionString(connectionString);
             const queueName = `${{ secrets.AZURE_QUEUE_NAME }}`;
             const queueClient = queueServiceClient.getQueueClient(queueName);
-            const messageId = '${{needs.dequeue.outputs.MESSAGE_ID}}';
-            const popReceipt = '${{needs.dequeue.outputs.POP_RECEIPT}}';
-            await queueClient.deleteMessage(messageId, popReceipt);
+            receivedMessages = await queueClient.receiveMessages();
+            var message = receivedMessages.receivedMessageItems[0];
+            console.log("Dequeuing message: ", message.messageText);
+            await queueClient.deleteMessage(message.messageId, message.popReceipt);
