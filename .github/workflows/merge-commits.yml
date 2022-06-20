@@ -39,7 +39,7 @@ jobs:
             await queueClient.updateMessage(
                 message.messageId,
                 message.popReceipt,
-                "This message has been updated"
+                "{ "sha": firstMessage.sha, "author": firstMessage.author, "label": "in-progress" }"
             );
             return firstMessage;
     outputs:
