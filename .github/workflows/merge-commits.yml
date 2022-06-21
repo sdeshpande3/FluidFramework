@@ -32,6 +32,12 @@ jobs:
             const message = receivedMessages.peekedMessageItems[0].messageText;
             const firstMessage = JSON.parse(message);
             if(firstMessage === undefined) { return 0; }
+            const updateMsg = { "sha": firstMessage.sha, "author": firstMessage.author, "label": "in-progress" }
+            await queueClient.updateMessage(
+                firstMessage.messageId,
+                firstMessage.popReceipt,
+                JSON.stringify(updateMsg)
+            );
             console.log("message----", firstMessage);
             console.log("sha---", firstMessage.sha);
             console.log("label---", firstMessage.label);
