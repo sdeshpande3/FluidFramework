@@ -34,8 +34,8 @@ jobs:
             if(firstMessage === undefined) { return 0; }
             const updateMsg = { "sha": firstMessage.sha, "author": firstMessage.author, "label": "in-progress" }
             await queueClient.updateMessage(
-                firstMessage.messageId,
-                firstMessage.popReceipt,
+                message.messageId,
+                message.popReceipt,
                 JSON.stringify(updateMsg)
             );
             console.log("message----", firstMessage);
