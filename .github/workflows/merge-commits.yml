@@ -29,7 +29,7 @@ jobs:
             const queueServiceClient = QueueServiceClient.fromConnectionString(connectionString);
             const queueClient = queueServiceClient.getQueueClient(queueName);
             var receivedMessages = await queueClient.peekMessages();
-            const message = receivedMessages.peekedMessageItems[0].messageText;
+            const message = receivedMessages.receivedMessageItems[0].messageText;
             const firstMessage = JSON.parse(message);
             if(firstMessage === undefined) { return 0; }
             const updateMsg = { "sha": firstMessage.sha, "author": firstMessage.author, "label": "in-progress" }
