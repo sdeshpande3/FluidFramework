@@ -1,8 +1,13 @@
 name: Merge commits to next branch
 
+# on:
+#   schedule:
+#     - cron: "0 */2 * * *"
+
 on:
-  schedule:
-    - cron: "0 */2 * * *"
+  push:
+    branches:
+      - 'workflow_1'
 
 env:
   TARGET_BRANCH: next
