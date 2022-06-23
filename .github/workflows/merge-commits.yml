@@ -74,8 +74,6 @@ jobs:
           git checkout -b main-next-${{needs.dequeue.outputs.SHA}}
           git fetch
           git push --set-upstream origin main-next-${{needs.dequeue.outputs.SHA}}
-      - name: Pull next 
-        run: |
           git pull origin $TARGET_BRANCH
           git add .
           git commit -m "Merge next into main-next pr" --allow-empty
