@@ -76,7 +76,7 @@ jobs:
         run: |
           git pull origin $TARGET_BRANCH
           git add .
-          git commit --allow-empty
+          git commit -m "Merge next into main-next pr" --allow-empty
           git push -f
   pull-request:
     runs-on: ubuntu-latest
