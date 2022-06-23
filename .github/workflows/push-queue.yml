@@ -8,8 +8,7 @@ on:
 jobs:
   queue-pr:
     runs-on: ubuntu-latest
-    if: github.event.label.name != 'do-not-merge-in-next' && github.repository_owner
-      == 'microsoft'
+    if: github.event.label.name != 'do-not-merge-in-next' && github.repository_owner == 'microsoft'
     steps:
       - run: echo ${{ github.event.issue.number }} echo ${{ github.event.label.name }}
       - run: npm install @azure/storage-queue
