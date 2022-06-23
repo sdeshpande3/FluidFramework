@@ -2,7 +2,7 @@ name: Merge commits to next branch
 
 on:
   schedule:
-    - cron: "0 */3 * * *"
+    - cron: "0 */2 * * *"
 
 env:
   TARGET_BRANCH: next
@@ -72,6 +72,12 @@ jobs:
           git fetch --all
           git reset --hard ${{needs.dequeue.outputs.SHA}}
           git push --set-upstream origin main-next-${{needs.dequeue.outputs.SHA}}
+      - name: Pull next 
+        run: |
+          git pull origin $TARGET_BRANCH
+          git add .
+          git commit --allow-empty
+          git push -f
   pull-request:
     runs-on: ubuntu-latest
     concurrency:
