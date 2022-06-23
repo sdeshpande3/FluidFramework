@@ -101,7 +101,7 @@ jobs:
             const baseBranch = ${{ env.TARGET_BRANCH }};
             const octokit = new Octokit({ auth: token })
             const newPr = await octokit.request('POST /repos/{owner}/{repo}/pulls', {
-              owner: 'microsoft',
+              owner: 'sonalivdeshpande',
               repo: 'FluidFramework',
               title: 'Main Next Integrate',
               body: 'This commit is queued for getting merged with the next branch. Please make sure to resolve any conflicts/CI failures seen on this PR. Thank you!',
@@ -109,7 +109,7 @@ jobs:
               base: baseBranch
             });
             await octokit.request('POST /repos/{owner}/{repo}/issues/{issue_number}/assignees', {
-              owner: 'microsoft',
+              owner: 'sonalivdeshpande',
               repo: 'FluidFramework',
               issue_number: newPr.data.number,
               assignees: [ author, 'sonalivdeshpande', 'tylerbutler' ]
