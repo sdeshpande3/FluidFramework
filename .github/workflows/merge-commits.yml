@@ -73,7 +73,6 @@ jobs:
           git checkout $SOURCE_BRANCH
           git checkout -b main-next-${{needs.dequeue.outputs.SHA}}
           git fetch
-  # git reset --hard ${{needs.dequeue.outputs.SHA}}
           git push --set-upstream origin main-next-${{needs.dequeue.outputs.SHA}}
       - name: Pull next 
         run: |
