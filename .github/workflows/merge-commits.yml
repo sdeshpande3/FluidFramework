@@ -65,6 +65,7 @@ jobs:
         if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
         uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2
         with:
+          token: ${{ secrets.WORKFLOW_TOKEN }}
           fetch-depth: '0'
       - name: Create branch
         if: ${{needs.dequeue.outputs.LABEL}} == 'queued'
@@ -92,6 +93,7 @@ jobs:
       - name: Git checkout
         uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2
         with:
+          token: ${{ secrets.WORKFLOW_TOKEN }}
           fetch-depth: '0'
       - name: Merge next
         run: |
@@ -116,6 +118,7 @@ jobs:
       - name: Git checkout
         uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2
         with:
+          token: ${{ secrets.WORKFLOW_TOKEN }}
           fetch-depth: '0'
       - name: Push next merge
         run: |
