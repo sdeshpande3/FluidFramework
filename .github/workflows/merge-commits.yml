@@ -1,8 +1,12 @@
 name: Merge commits to next branch
 
+# on:
+#   schedule:
+#     - cron: "0 */2 * * *"
+
 on:
-  schedule:
-    - cron: "0 */2 * * *"
+  push:
+    - 'merge-next'
 
 env:
   TARGET_BRANCH: next
@@ -82,7 +86,7 @@ jobs:
       issues: write
       pull-requests: write
       statuses: write
-    needs: [ create-branch ]
+    needs: [ create-branch, dequeue ]
     steps:
       - name: Git checkout
         uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2
@@ -139,7 +143,8 @@ jobs:
             const token = `${{ secrets.GITHUB_TOKEN }}`;
             const sha = 'main-next-${{needs.dequeue.outputs.SHA}}';
             const author = '${{needs.dequeue.outputs.AUTHOR}}';
-            const baseBranch = ${{ env.TARGET_BRANCH }};
+            const baseBranch = '${{ env.TARGET_BRANCH }}';
+            console.log("branch name---", baseBranch);
             const octokit = new Octokit({ auth: token })
             const newPr = await octokit.request('POST /repos/{owner}/{repo}/pulls', {
               owner: 'microsoft',
