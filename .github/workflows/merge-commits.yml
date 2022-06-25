@@ -126,7 +126,7 @@ jobs:
           git config user.email $EMAIL
           git fetch origin
           git checkout main-next-${{needs.dequeue.outputs.SHA}}
-          git merge $TARGET_BRANCH -X theirs
+          git merge origin/$TARGET_BRANCH -X theirs
           git add .
           git commit -m "Main to next"
           git push
@@ -135,7 +135,7 @@ jobs:
     concurrency:
       group: group-pr
       cancel-in-progress: false
-    needs: [ create-branch, dequeue, merge-dry-run ]
+    needs: [ create-branch, dequeue, merge-dry-run, push-merge ]
     if: always()
     steps:
       - run: npm install @octokit/core
