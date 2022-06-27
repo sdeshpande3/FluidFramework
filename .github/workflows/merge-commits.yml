@@ -132,12 +132,12 @@ jobs:
       actions: read
       contents: read
       security-events: write
-      statuses: write
+      pull-requests: write
     concurrency:
       group: group-pr
       cancel-in-progress: false
     needs: [ create-branch, dequeue, merge-dry-run, push-merge ]
-    if: needs.create-branch.result == 'success'
+    if: always()
     steps:
       - run: npm install @octokit/core
       - name: Create PR using octokit
@@ -148,7 +148,7 @@ jobs:
             const token = `${{ secrets.GITHUB_TOKEN }}`;
             const sha = 'main-next-${{needs.dequeue.outputs.SHA}}';
             const author = '${{needs.dequeue.outputs.AUTHOR}}';
-            const baseBranch = '${{ env.TARGET_BRANCH }}';
+            const baseBranch = ''${{ env.TARGET_BRANCH }}'';
             console.log("branch name---", baseBranch);
             const octokit = new Octokit({ auth: token })
             const newPr = await octokit.request('POST /repos/{owner}/{repo}/pulls', {
