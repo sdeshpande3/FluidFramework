@@ -128,9 +128,16 @@ jobs:
           git push
   pull-request:
     runs-on: ubuntu-latest
-    concurrency:
-      group: group-pr
-      cancel-in-progress: false
+    permissions:
+      contents: write
+      packages: write
+      actions: write
+      checks: write
+      issues: write
+      pull-requests: write
+      statuses: write
+      id-token: write
+      security-events: write
     needs: [ create-branch, dequeue, merge-dry-run, push-merge ]
     if: always()
     steps:
@@ -161,9 +168,6 @@ jobs:
             });
   remove-from-queue:
     runs-on: ubuntu-latest
-    concurrency:
-      group: group-pr
-      cancel-in-progress: false
     needs: [ pull-request ]
     if: ( needs.pull-request.result == 'success' )
     steps:
