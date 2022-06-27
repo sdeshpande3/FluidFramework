@@ -151,8 +151,6 @@ jobs:
             const token = `${{ secrets.GITHUB_TOKEN }}`;
             const sha = 'main-next-${{needs.dequeue.outputs.SHA}}';
             const author = '${{needs.dequeue.outputs.AUTHOR}}';
-            const baseBranch = '${{ env.TARGET_BRANCH }}';
-            console.log("branch name---", baseBranch);
             const octokit = new Octokit({ auth: token })
             const newPr = await octokit.request('POST /repos/{owner}/{repo}/pulls', {
               owner: 'microsoft',
