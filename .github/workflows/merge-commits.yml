@@ -106,6 +106,8 @@ jobs:
       issues: write
       pull-requests: write
       statuses: write
+      id-token: write
+      security-events: write
     needs: [ merge-dry-run, dequeue ]
     if: needs.merge-dry-run.result == 'success'
     steps:
