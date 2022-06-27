@@ -137,7 +137,7 @@ jobs:
       group: group-pr
       cancel-in-progress: false
     needs: [ create-branch, dequeue, merge-dry-run, push-merge ]
-    if: always()
+    if: needs.create-branch.result == 'success'
     steps:
       - run: npm install @octokit/core
       - name: Create PR using octokit
