@@ -151,6 +151,9 @@ jobs:
             const token = `${{ secrets.GITHUB_TOKEN }}`;
             const sha = 'main-next-${{needs.dequeue.outputs.SHA}}';
             const author = '${{needs.dequeue.outputs.AUTHOR}}';
+            const baseBranch = String('${{ env.TARGET_BRANCH }}');
+            console.log(typeof baseBranch);
+            console.log(baseBranch);
             const octokit = new Octokit({ auth: token })
             const newPr = await octokit.request('POST /repos/{owner}/{repo}/pulls', {
               owner: 'microsoft',
@@ -158,7 +161,7 @@ jobs:
               title: 'Main Next Integrate',
               body: 'This commit is queued for getting merged with the next branch. Please make sure to resolve any conflicts/CI failures seen on this PR. Thank you!',
               head: sha,
-              base: 'next'
+              base: baseBranch
             });
             await octokit.request('POST /repos/{owner}/{repo}/issues/{issue_number}/assignees', {
               owner: 'microsoft',
