@@ -138,6 +138,7 @@ jobs:
       - name: Create PR using octokit
         uses: actions/github-script@7a5c598405937d486b0331594b5da2b14db670da # pin@v6
         with:
+          token: ${{ secrets.WORKFLOW_TOKEN }}
           script: |
             const { Octokit } = require("@octokit/core");
             const token = `${{ secrets.GITHUB_TOKEN }}`;
