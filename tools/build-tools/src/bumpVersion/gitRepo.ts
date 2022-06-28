@@ -122,6 +122,22 @@ export class GitRepo {
         await this.exec(`push ${remote} ${fromBranchName}:${toBranchName}`, `push branch ${fromBranchName}->${toBranchName} to ${remote}`);
     }
 
+    public async mergeBase(fromBranch: string, toBranch: string) {
+        await this.exec(`merge-base ${fromBranch} ${toBranch}`, `no common commit found for ${fromBranch} to ${toBranch}`);
+    }
+
+    public async mergeBranch(branch: string) {
+        await this.exec(`merge ${branch} -X theirs`, `merge ${branch}`)
+    }
+
+    public async mergeAbort(branch: string) {
+        await this.exec(`merge ${branch} --abort`, `merge ${branch}`)
+    }
+
+    public async listCommit(commitId: string) {
+        await this.exec(`rev-list ${commitId}...HEAD`, `rev-list ${commitId}...HEAD`);
+    }
+
     /**
      * Delete a branch
      * NOTE: this doesn't fail on error
@@ -162,6 +178,10 @@ export class GitRepo {
      */
     public async fetchTags() {
         return await this.exec(`fetch --tags`, `fetch tags`);
+    }
+
+    public async resetBranch(commitId: string) {
+        return await this.exec(`reset --hard ${commitId}`, `reset --hard ${commitId}`);
     }
 
     /**
