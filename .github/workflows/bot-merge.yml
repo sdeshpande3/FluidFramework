@@ -26,7 +26,7 @@ jobs:
         test: true
         reviewers: true
         labels: bot:main-next-merge
-        blocking_labels: do-not-merge-to-next
+        blocking_labels: do-not-merge-in-next
         checks_enabled: true
         method: merge
         delete_source_branch: true
