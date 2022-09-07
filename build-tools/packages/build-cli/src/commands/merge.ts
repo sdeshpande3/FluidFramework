@@ -143,9 +143,12 @@ export default class Merge extends BaseCommand<typeof Merge.flags> {
             this.exit(-1);
         }
 
+        // last merged commit between source and target branch
         const lastMergedCommit = await gitRepo.mergeBase(flags.sourceBranch, flags.targetBranch);
+        this.log(`Last merged commit in ${flags.targetBranch}------`, lastMergedCommit);
+        // list of unmerged commits between source and target branch
         const unmergedCommits = await gitRepo.revList(lastMergedCommit, flags.sourceBranch);
-        this.log("unmerged commit------", unmergedCommits);
+        this.log(`List of unmerged commit in ${flags.sourceBranch} and ${flags.targetBranch}------`, unmergedCommits);
 
         if (
             unmergedCommits === undefined ||
@@ -153,44 +156,11 @@ export default class Merge extends BaseCommand<typeof Merge.flags> {
             unmergedCommits.length === 0
         ) {
             this.log(
-                `${flags.sourceBranch} and ${flags.targetBranch} are in sync. Not commits to merge`,
+                `${flags.sourceBranch} and ${flags.targetBranch} are in sync. No commits to merge`,
             );
             this.exit(-1);
         }
 
-        // check if commits equal to specific bacth size exists
-        const lastCommitID: string =
-            unmergedCommits.length <= flags.batchSize
-                ? unmergedCommits[unmergedCommits.length - 1]
-                : unmergedCommits[flags.batchSize - 1];
-
-        const syncbranchName: string =
-            flags.branchName ?? `${flags.sourceBranch}-${flags.targetBranch}-${lastCommitID}`;
-
-        // iterate and get the last commit
-        const commitInfo: any = await prInfo(flags.githubToken, lastCommitID);
-        this.log("commit info----", commitInfo);
-
-        // create branch
-        await gitRepo.createBranch(syncbranchName);
-
-        // reset branch to lastCommmitID
-        await gitRepo.resetBranch(lastCommitID);
-
-        // create pull request
-        const pullRequest = await createPR(
-            flags.githubToken,
-            syncbranchName,
-            flags.targetBranch,
-            commitInfo.actor,
-        );
-        this.log(`PR opened upto ${lastCommitID}`);
-
-        if (pullRequest === undefined || pullRequest === "") {
-            this.error("Unable to create pull request");
-            // notify the process owner
-        }
-
-        this.log(`there is a ${syncbranchName} and ${flags.targetBranch} PR opened`);
+        this.log(`there is a and ${flags.targetBranch} PR opened`);
     }
 }
