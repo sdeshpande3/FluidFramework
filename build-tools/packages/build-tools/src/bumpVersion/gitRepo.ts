@@ -201,6 +201,14 @@ export class GitRepo {
         return this.exec(`merge-base ${source} ${target}`, `merge base ${source} ${target}`);
     }
 
+    public async mergeAbort() {
+        return this.exec(`merge --abort`, `abort merge commit`);
+    }
+
+    public async merge(commitId: string) {
+        return this.exec(`merge ${commitId} --no-ff`, `merge commit`);
+    }
+
     public async revList(commitId: string, branchName: string) {
         return this.exec(`rev-list ${commitId}...${branchName}`, `list of new commits between ${commitId} and ${branchName}`);
     }

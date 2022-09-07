@@ -139,9 +139,9 @@ export default class Merge extends BaseCommand<typeof Merge.flags> {
         const gitRepo = new GitRepo(resolvedRoot);
 
         // check if PR exists
-        if (await prExists(flags.githubToken, "Automation: Main Next Integrate")) {
-            this.exit(-1);
-        }
+        // if (await prExists(flags.githubToken, "Automation: Main Next Integrate")) {
+        //     this.exit(-1);
+        // }
 
         // last merged commit between source and target branch
         const lastMergedCommit = await gitRepo.mergeBase(flags.sourceBranch, flags.targetBranch);
