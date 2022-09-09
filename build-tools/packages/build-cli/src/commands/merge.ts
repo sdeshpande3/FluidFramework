@@ -25,12 +25,13 @@ async function prExists(token: string, title: string): Promise<boolean> {
 
 async function prInfo(token: string, commitSha: string) {
     const octokit = new Octokit({ auth: token });
-    await octokit.request("GET /repos/{owner}/{repo}/commits/{commit_sha}/pulls", {
-        owner,
-        repo,
-        commitSha,
-    });
+    // await octokit.request("GET /repos/{owner}/{repo}/commits/{commit_sha}/pulls", {
+    //     owner,
+    //     repo,
+    //     commitSha,
+    // });
 }
+
 
 async function createPR(token: string, sourceBranch: string, targetBranch: string, author: string) {
     const description = `
