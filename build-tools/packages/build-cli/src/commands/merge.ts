@@ -76,21 +76,21 @@ export default class Merge extends BaseCommand<typeof Merge.flags> {
     static description = "Used to merge two branches.";
 
     static flags = {
-        githubToken: Flags.string({
-            description: "GitHub secret token",
-            required: true,
-            env: "GITHUB_TOKEN",
-        }),
-        owner: Flags.string({
-            description: "Repository owner",
-            default: "microsoft",
-            hidden: true,
-        }),
-        repoName: Flags.string({
-            description: "Repository name",
-            default: "FluidFramework",
-            hidden: true,
-        }),
+        // githubToken: Flags.string({
+        //     description: "GitHub secret token",
+        //     required: true,
+        //     env: "GITHUB_TOKEN",
+        // }),
+        // owner: Flags.string({
+        //     description: "Repository owner",
+        //     default: "microsoft",
+        //     hidden: true,
+        // }),
+        // repoName: Flags.string({
+        //     description: "Repository name",
+        //     default: "FluidFramework",
+        //     hidden: true,
+        // }),
         sourceBranch: Flags.string({
             description: "Source branch name",
             char: "s",
@@ -148,7 +148,10 @@ export default class Merge extends BaseCommand<typeof Merge.flags> {
         this.log(`Last merged commit in ${flags.targetBranch}------`, lastMergedCommit);
         // list of unmerged commits between source and target branch
         const unmergedCommits = await gitRepo.revList(lastMergedCommit, flags.sourceBranch);
-        this.log(`List of unmerged commit in ${flags.sourceBranch} and ${flags.targetBranch}------`, unmergedCommits);
+        this.log(
+            `List of unmerged commit in ${flags.sourceBranch} and ${flags.targetBranch}------`,
+            unmergedCommits,
+        );
 
         if (
             unmergedCommits === undefined ||

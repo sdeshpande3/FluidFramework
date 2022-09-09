@@ -92,7 +92,7 @@ $ npm install -g @fluid-tools/build-cli
 $ flub COMMAND
 running command...
 $ flub (--version)
-@fluid-tools/build-cli/0.4.3000 linux-x64 node-v14.20.0
+@fluid-tools/build-cli/0.4.3000 win32-x64 node-v14.18.1
 $ flub --help [COMMAND]
 USAGE
   $ flub COMMAND
@@ -304,8 +304,7 @@ Used to merge two branches.
 
 ```
 USAGE
-  $ flub merge --githubToken <value> [--owner <value>] [--repoName <value>] [-s <value>] [-t <value>] [-b
-    <value>] [--branchName <value>] [-r <value>] [-v]
+  $ flub merge [-s <value>] [-t <value>] [-b <value>] [--branchName <value>] [-r <value>] [-v]
 
 FLAGS
   -b, --batchSize=<value>     [default: 1] Number of commits to include in the pull request
@@ -314,9 +313,6 @@ FLAGS
   -t, --targetBranch=<value>  [default: next] Target branch name
   -v, --verbose               Verbose logging.
   --branchName=<value>        Any specific branch name. Default would be source-target-SHA
-  --githubToken=<value>       (required) GitHub secret token
-  --owner=<value>             [default: microsoft] Repository owner
-  --repoName=<value>          [default: FluidFramework] Repository name
 
 DESCRIPTION
   Used to merge two branches.
@@ -331,7 +327,7 @@ EXAMPLES
     $ flub merge --source=main --target=next --reviewers=xyz --reviewers=abc --batchSize=5
 ```
 
-_See code: [dist/commands/merge.ts](https://github.com/microsoft/FluidFramework/blob/v0.3.2000/dist/commands/merge.ts)_
+_See code: [dist/commands/merge.ts](https://github.com/microsoft/FluidFramework/blob/v0.4.3000/dist/commands/merge.ts)_
 
 ## `flub version VERSION`
 
