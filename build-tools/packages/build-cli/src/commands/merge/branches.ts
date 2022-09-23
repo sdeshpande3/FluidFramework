@@ -55,7 +55,10 @@ export default class MergeBranch extends BaseCommand<typeof MergeBranch.flags> {
             this.exit(-1);
         }
 
-        const prInfo = await api.pullRequestInfo(flags.auth, "58221f03b97588d46259da08e3dceb0f79b76be0");
+        const prInfo = await api.pullRequestInfo(
+            flags.auth,
+            "58221f03b97588d46259da08e3dceb0f79b76be0",
+        );
         this.info(`pr info: ${JSON.parse(prInfo)}`);
 
         // git pull main
