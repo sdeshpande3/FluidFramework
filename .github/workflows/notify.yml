@@ -1,0 +1,51 @@
+name: Notify by adding comment on pull request
+
+on:
+  schedule:
+    - cron: "0 1-17/2 * * 1-5" # Cron timezone is in UTC. Run this cron job from 9am to 5pm pst
+
+jobs:
+  check-pr:
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'microsoft'
+    steps:
+      - run: npm install @octokit/core
+      - name: Check PR exists using octokit
+        uses: actions/github-script@7a5c598405937d486b0331594b5da2b14db670da # pin@v6
+        id: check-pr-exists
+        with:
+          token: ${{ secrets.BOT_MAIN_NEXT_WORKFLOW_PAT }}
+          script: |
+            const { Octokit } = require("@octokit/core");
+            const token = `${{ secrets.GITHUB_TOKEN }}`;
+            const octokit = new Octokit({ auth: token });
+            const response = await octokit.request('GET /repos/{owner}/{repo}/pulls', {
+              owner: 'microsoft',
+              repo: 'FluidFramework'
+            });
+            for(let i=0; i<response.data.length; i++) {
+              if(response.data[i].title === 'Automation: Main Next Integrate') {
+                const currentTime = new Date();
+                const previousTime = new Date(response.data[i].created_at);
+                const time = currentTime - previousTime;
+                let hours;
+                if(time > 60e3) {
+                  // in minutes
+                  hours = (Math.floor(time / 60e3))/60;
+                } else {
+                  // in seconds
+                  hours = (Math.floor(time / 1e3))/3600;
+                }
+                if(hours > 2) {
+                    return response.data[i].number;
+                }
+              }
+            }
+            return "false";
+      - name: Add comment
+        if: steps.check-pr-exists.outputs.result != "false"
+        uses: marocchino/sticky-pull-request-comment@39c5b5dc7717447d0cba270cd115037d32d28443 # pin@v2
+        with:
+          number: ${{ steps.findPr.outputs.result }}
+          message: |
+            This pull request is queued to get merged in next. SOME COMMENT HERE...

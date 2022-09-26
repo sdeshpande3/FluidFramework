@@ -59,7 +59,7 @@ export default class MergeBranch extends BaseCommand<typeof MergeBranch.flags> {
             flags.auth,
             "58221f03b97588d46259da08e3dceb0f79b76be0",
         );
-        this.info(`pr info: ${JSON.parse(prInfo)}`);
+        this.info(`pr info: ${JSON.stringify(prInfo)}`);
 
         // git pull main
         // git pull next
