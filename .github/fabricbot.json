@@ -712,27 +712,11 @@
         "requireAllStatuses": false,
         "conditionalMergeTypes": [
           {
-            "mergeType": "squash",
+            "mergeType": "merge",
             "condition": {
               "placeholder": "labels",
-              "operator": "notContains",
+              "operator": "contains",
               "label_name": "do-not-squash-merge"
-            }
-          },
-          {
-            "mergeType": "squash",
-            "condition": {
-              "placeholder": "labels",
-              "operator": "notContains",
-              "label_name": "main-next-integrate"
-            }
-          },
-          {
-            "mergeType": "squash",
-            "condition": {
-              "placeholder": "author",
-              "operator": "notEquals",
-              "value": "github-actions"
             }
           },
           {
