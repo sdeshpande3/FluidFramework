@@ -119,18 +119,30 @@ jobs:
             const token = `${{ secrets.GITHUB_TOKEN }}`;
             const sha = 'main-next-${{needs.dequeue.outputs.SHA}}';
             const author = '${{needs.dequeue.outputs.AUTHOR}}';
-            const description = `
-              ## Main-next integrate PR
+            const description = `## Main-next integrate PR
 
-              The aim of this pull request is to sync main and next branch. The expectation from the assignee is as follows:
+            The aim of this pull request is to sync main and next branch. The expectation from the assignee is as follows:
 
-              > - Acknowledge the pull request by adding a comment -- "Actively working on it".
-              > - Resolve any merge conflicts between this branch and next (and push the resolution to this branch). Merge next into this branch if needed. **Do NOT rebase or squash this branch: its history must be preserved**.
-              > - Ensure CI is passing for this PR, fixing any issues. Please don't look into resolving **Real service e2e test** and **Stress test** failures as they are **non-required** CI failures.
-              > - Once the PR is ready for merge, please add a comment @mentioning the reviewers to get this PR merged in. Thank you!!
+            > - Acknowledge the pull request by adding a comment -- "Actively working on it".
+            > - Resolve any merge conflicts between this branch and next (and push the resolution to this branch). Merge next into this branch if needed. **Do NOT rebase or squash this branch: its history must be preserved**.
+            > - Ensure CI is passing for this PR, fixing any issues. Please don't look into resolving **Real service e2e test** and **Stress test** failures as they are **non-required** CI failures.
+            > - Once the PR is ready for merge, please add a comment @mentioning the reviewers to get this PR merged in. Thank you!!
 
-              For more information about how to resolve merge conflicts and CI failures, visit [this wiki page]
-              (https://github.com/microsoft/FluidFramework/wiki/Main-next-Automation).`;
+            For more information about how to resolve merge conflicts and CI failures, visit [this wiki page](https://github.com/microsoft/FluidFramework/wiki/Main-next-Automation).
+
+
+            ### Recommended Git Commands
+
+            >- After pulling the branch locally run -- `git merge next`
+            >- For pushing the first resolution to the branch --
+                  `git add .`
+                  `git commit -m  "Main to next"` // this could be any commit message that would make sense
+                  `git push`
+
+            >- For pushing any subsequent commits to the branch
+            `git add .`
+     `git commit --amend` // we amend the previous commit to keep git history clean
+     `git push --force-with-lease``;
             const octokit = new Octokit({ auth: token })
             const newPr = await octokit.request('POST /repos/{owner}/{repo}/pulls', {
               owner: 'microsoft',
